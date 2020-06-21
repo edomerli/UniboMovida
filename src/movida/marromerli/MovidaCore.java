@@ -3,44 +3,90 @@ package movida.marromerli;
 import movida.commons.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Scanner;
+
 
 public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
     private SortingAlgorithm sortingAlgorithm; //Algoritmo usato
     private MapImplementation mapImplementation; //Implementazione di dizionario usata
 
+    private LinkedList<Movie> movies;
+
+    public MovidaCore() {
+        this.movies = new LinkedList<Movie>();
+    }
 
     @Override
-    public void setMap(MapImplementation m) {
-        //TODO: I docs dicono che deve restituire un boolean, ma l'implementazione è void
-        if (m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR){
-            throw new UnsupportedOperationException("Tipo di dizionario non supportato.");
-        }
-        else {
+    public boolean setMap(MapImplementation m) {
+        if (m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) {
             this.mapImplementation = m;
+            return true;
+        } else {
+            return false;
         }
         //TODO: è necessario ricostruire da capo il database?
     }
 
     @Override
-    public void setSort(SortingAlgorithm a) {
-        //TODO: I docs dicono che deve restituire un boolean, ma l'implementazione è void
-        if (a == SortingAlgorithm.BubbleSort || a == SortingAlgorithm.QuickSort){
-            throw new UnsupportedOperationException("Tipo di algoritmo di ordinamento non supportato.");
-        }
-        else {
+    public boolean setSort(SortingAlgorithm a) {
+        if (a == SortingAlgorithm.BubbleSort || a == SortingAlgorithm.QuickSort) {
             this.sortingAlgorithm = a;
+            return true;
+        } else {
+            return false;
         }
     }
 
     @Override
     public void loadFromFile(File f) {
-        i
+        try {
+            Scanner s = new Scanner(f);
+            while (s.hasNextLine()) {
+                //TODO: Abbellire?
+                String title = s.nextLine().split(":")[1].trim();
+                int year = Integer.parseInt(s.nextLine().split(":")[1].trim());
+                String directorName = s.nextLine().split(":")[1].trim();
+                String[] castNames = s.nextLine().split(":")[1].trim().split(", ");
+                int votes = Integer.parseInt(s.nextLine().split(":")[1].trim());
+
+                Person director = new Person(directorName);
+                Person[] cast = new Person[castNames.length];
+                for (int i = 0; i < castNames.length; i++) {
+                    cast[i] = new Person(castNames[i]);
+                }
+
+                Movie movie = new Movie(title, year, votes, cast, director);
+                if (s.hasNextLine()) {
+                    s.nextLine();
+                }
+
+                movies.add(movie);
+            }
+            s.close();
+        } catch (FileNotFoundException e) {
+            //TODO: Cosa fare?
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void saveToFile(File f) {
+        try {
+            FileWriter writer = new FileWriter(f, false);
 
+            for (Movie movie : this.movies) {
+                writer.append(movie.toString() + "\n\n");
+            }
+            writer.close();
+        } catch (IOException e) {
+            //TODO: Cosa fare?
+            e.printStackTrace();
+            return;
+        }
     }
 
     @Override

@@ -12,10 +12,10 @@ package movida.commons;
  * Classe usata per rappresentare un film
  * nell'applicazione Movida.
  * 
- * Un film è identificato in modo univoco dal titolo 
+ * Un film ÔøΩ identificato in modo univoco dal titolo 
  * case-insensitive, senza spazi iniziali e finali, senza spazi doppi. 
  * 
- * La classe può essere modicata o estesa ma deve implementare tutti i metodi getter
+ * La classe puÔøΩ essere modicata o estesa ma deve implementare tutti i metodi getter
  * per recupare le informazioni caratterizzanti di un film.
  * 
  */
@@ -55,6 +55,23 @@ public class Movie {
 	public Person getDirector() {
 		return this.director;
 	}
-	
-	
+
+	//Aggiunto
+	@Override
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		s.append("Title: " + this.title + "\n");
+		s.append("Year: " + this.year + "\n");
+		s.append("Director: " + this.director.getName() + "\n");
+		s.append("Cast: ");
+		for (int i = 0; i < this.cast.length; i++) {
+			s.append(this.cast[i].getName());
+			if (i != this.cast.length - 1) {
+				s.append(", ");
+			}
+		}
+		s.append("\n");
+		s.append("Votes: " + this.votes);
+		return s.toString();
+	}
 }
