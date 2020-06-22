@@ -33,6 +33,7 @@ public class ABR {
 
         if(m.compareTo(root.movie) < 0) root.left = insertRecursive(m, root.left);
         else if(m.compareTo(root.movie) > 0) root.right = insertRecursive(m, root.right);
+        else root.movie = m;
 
         return root;
     }
@@ -82,5 +83,10 @@ public class ABR {
     private Movie minSubtree(Node root){
         if(root.left == null) return root.movie;
         return minSubtree(root.left);
+    }
+
+    public void clear(){
+        root = null;
+        // TODO: il resto lo gestisce il Garbage Collector?
     }
 }
