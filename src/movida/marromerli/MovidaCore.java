@@ -68,8 +68,8 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
             }
             s.close();
         } catch (FileNotFoundException e) {
-            //TODO: Cosa fare?
             e.printStackTrace();
+            throw new MovidaFileException();
         }
     }
 
@@ -83,9 +83,8 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
             }
             writer.close();
         } catch (IOException e) {
-            //TODO: Cosa fare?
             e.printStackTrace();
-            return;
+            throw new MovidaFileException();
         }
     }
 
