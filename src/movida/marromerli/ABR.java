@@ -1,10 +1,6 @@
 package movida.marromerli;
 
-import java.util.Comparator;
-
-public class ABR<K, V> implements Dictionary<K, V> {
-
-    private Comparator<K> comparator;
+public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
 
     private class Node {
         public K key;
@@ -21,9 +17,8 @@ public class ABR<K, V> implements Dictionary<K, V> {
 
     private Node root;
 
-    public ABR(Comparator<K> comparator){
+    public ABR(){
         root = null;
-        this.comparator = comparator;
     }
 
     @Override
@@ -37,8 +32,8 @@ public class ABR<K, V> implements Dictionary<K, V> {
             return leaf;
         }
 
-        if(comparator.compare(k, root.key) < 0) root.left = insertRecursive(k, v, root.left);
-        else if(comparator.compare(k, root.key) > 0) root.right = insertRecursive(k, v, root.right);
+        if(k.compareTo(root.key) < 0) root.left = insertRecursive(k, v, root.left);
+        else if(k.compareTo(root.key) > 0) root.right = insertRecursive(k, v, root.right);
         else root.value = v;
 
         return root;
@@ -52,9 +47,9 @@ public class ABR<K, V> implements Dictionary<K, V> {
     private V searchRecursive(K k, Node root){
         if(root == null) return null;   // Key is missing
 
-        if(comparator.compare(k, root.key) == 0) return root.value;
+        if(k.compareTo(root.key) == 0) return root.value;
 
-        else if(comparator.compare(k, root.key) < 0) return searchRecursive(k, root.left);
+        else if(k.compareTo(root.key) < 0) return searchRecursive(k, root.left);
         else return searchRecursive(k, root.right);
     }
 
@@ -66,7 +61,7 @@ public class ABR<K, V> implements Dictionary<K, V> {
     private Node removeRecursive(K k, Node root){
         if(root == null) return root;    // Key is missing
 
-        if(comparator.compare(k, root.key) == 0){
+        if(k.compareTo(root.key) == 0){
             // Case 1: node to be deleted it's a leaf
             if(root.left == null && root.right == null){
                 root = null;
@@ -85,7 +80,7 @@ public class ABR<K, V> implements Dictionary<K, V> {
             root.right = removeRecursive(root.key, root.right);
         }
 
-        else if(comparator.compare(k, root.key) < 0) root.left = removeRecursive(k, root.left);
+        else if(k.compareTo(root.key) < 0) root.left = removeRecursive(k, root.left);
         else root.right = removeRecursive(k, root.right);
 
         return root;

@@ -21,15 +21,44 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     private Sorter sorter;
 
+
+    private Dictionary<String, Movie> moviesByTitle;
+    private Dictionary<Integer, Movie[]> moviesByYear;
+    private Dictionary<String, Movie[]> moviesByDirector;
+    private Dictionary<String, Movie[]> moviesByActor;
+
+    private CollaborationGraph graph;
+
     public MovidaCore() {
         this.movies = new ArrayList<Movie>();
         this.actors = new ArrayList<Person>();
         this.directors = new ArrayList<Person>();
+
+        this.moviesByTitle = null;
+        this.moviesByYear = null;
+        this.moviesByDirector = null;
+        this.moviesByActor = null;
+        this.graph = null;
     }
 
     @Override
     public boolean setMap(MapImplementation m) {
         if (m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) {
+            if(this.mapImplementation != m){
+                if(m == MapImplementation.ArrayOrdinato){
+                    this.moviesByTitle = new SortedArrayDictionary<String, Movie>();
+                    this.moviesByYear = new SortedArrayDictionary<Integer, Movie[]>();
+                    this.moviesByDirector = new SortedArrayDictionary<String, Movie[]>();
+                    this.moviesByActor = new SortedArrayDictionary<String, Movie[]>();
+                    // TODO: graph deve usare lo stesso dizionario che e' settato?
+                }
+                else{
+                    this.moviesByTitle = new ABR<String, Movie>();
+                    this.moviesByYear = new ABR<Integer, Movie[]>();
+                    this.moviesByDirector = new ABR<String, Movie[]>();
+                    this.moviesByActor = new ABR<String, Movie[]>();
+                }
+            }
             this.mapImplementation = m;
             return true;
         } else {
@@ -108,7 +137,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public int countMovies() {
-        return 0;
+        return movies.size();
     }
 
     @Override
@@ -136,6 +165,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
         return movies.toArray(new Movie[0]);
     }
 
+    // TODO: E se un attore fosse anche stato un direttore?? Ritornerei dei duplicati
     @Override
     public Person[] getAllPeople() {
         ArrayList<Person> people = actors;

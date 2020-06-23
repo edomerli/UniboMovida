@@ -3,9 +3,9 @@ package movida.marromerli;
 import java.util.Comparator;
 import java.util.List;
 
-public class BubbleSort<T> implements Sorter<T> {
+public class BubbleSort implements Sorter {
     @Override
-    public void sort(List<T> keys, Comparator<T> comparator) {
+    public <T> void sort(List<T> keys, Comparator<T> comparator) {
         int size = keys.size();
         
         for(int i = 0; i < size - 1; i++){

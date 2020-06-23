@@ -9,7 +9,6 @@ public class CollaborationGraph {
     private Dictionary<Person, ArrayList<Collaboration>> graph;
 
     public CollaborationGraph() {
-        // TODO: abbellire, ma l'idea e' questa
-        this.graph = new ABR<Person, ArrayList<Collaboration>>((Person a, Person b) -> a.getName().compareTo(b.getName()));
+        this.graph = new ABR<Person, ArrayList<Collaboration>>();
     }
 }
