@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
@@ -14,10 +14,17 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
     private SortingAlgorithm sortingAlgorithm; //Algoritmo usato
     private MapImplementation mapImplementation; //Implementazione di dizionario usata
 
-    private LinkedList<Movie> movies;
+    private ArrayList<Movie> movies;
+    private ArrayList<Person> actors;
+    private ArrayList<Person> directors;
+    // TODO: E' necessario distinguere attori e direttori in 2 array diversi?
+
+    private Sorter sorter;
 
     public MovidaCore() {
-        this.movies = new LinkedList<Movie>();
+        this.movies = new ArrayList<Movie>();
+        this.actors = new ArrayList<Person>();
+        this.directors = new ArrayList<Person>();
     }
 
     @Override
@@ -35,6 +42,12 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
     public boolean setSort(SortingAlgorithm a) {
         if (a == SortingAlgorithm.BubbleSort || a == SortingAlgorithm.QuickSort) {
             this.sortingAlgorithm = a;
+            
+            if(a == SortingAlgorithm.BubbleSort){
+                sorter = new BubbleSort();
+            }
+            else sorter = new QuickSort();
+
             return true;
         } else {
             return false;
@@ -120,12 +133,14 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public Movie[] getAllMovies() {
-        return new Movie[0];
+        return movies.toArray(new Movie[0]);
     }
 
     @Override
     public Person[] getAllPeople() {
-        return new Person[0];
+        ArrayList<Person> people = actors;
+        people.addAll(directors);
+        return people.toArray(new Person[0]);
     }
 
     @Override
