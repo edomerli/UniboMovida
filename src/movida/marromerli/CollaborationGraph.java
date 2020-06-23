@@ -1,14 +1,15 @@
 package movida.marromerli;
 
-import javafx.util.Pair;
-import movida.commons.Movie;
+import movida.commons.Collaboration;
+import movida.commons.Person;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class CollaborationGraph {
-    private LinkedList<Pair<Movie, LinkedList<Movie>>> graph;
+    private Dictionary<Person, ArrayList<Collaboration>> graph;
 
     public CollaborationGraph() {
-        this.graph = new LinkedList<>();
+        // TODO: abbellire, ma l'idea e' questa
+        this.graph = new ABR<Person, ArrayList<Collaboration>>((Person a, Person b) -> a.getName().compareTo(b.getName()));
     }
 }

@@ -1,15 +1,19 @@
 package movida.marromerli;
 
-import movida.commons.Movie;
+import java.util.Comparator;
 
-public class ABR {
+public class ABR<K, V> implements Dictionary<K, V> {
+
+    private Comparator<K> comparator;
 
     private class Node {
-        public Movie movie;
+        public K key;
+        public V value;
         public Node left, right;
 
-        public Node(Movie m){
-            movie = m;
+        public Node(K key, V value){
+            this.key = key;
+            this.value = value;
             left = null;
             right = null;
         }
@@ -17,48 +21,52 @@ public class ABR {
 
     private Node root;
 
-    public ABR(){
+    public ABR(Comparator<K> comparator){
         root = null;
+        this.comparator = comparator;
     }
 
-    public void insert(Movie m){
-        root = insertRecursive(m, root);
+    @Override
+    public void insert(K key, V value){
+        root = insertRecursive(key, value, root);
     }
 
-    private Node insertRecursive(Movie m, Node root){
+    private Node insertRecursive(K k, V v, Node root){
         if(root == null){
-            Node leaf = new Node(m);
-            return root;
+            Node leaf = new Node(k, v);
+            return leaf;
         }
 
-        if(m.compareTo(root.movie) < 0) root.left = insertRecursive(m, root.left);
-        else if(m.compareTo(root.movie) > 0) root.right = insertRecursive(m, root.right);
-        else root.movie = m;
+        if(comparator.compare(k, root.key) < 0) root.left = insertRecursive(k, v, root.left);
+        else if(comparator.compare(k, root.key) > 0) root.right = insertRecursive(k, v, root.right);
+        else root.value = v;
 
         return root;
     }
 
-    public Movie search(Movie m){
-        return searchRecursive(m, root);
+    @Override
+    public V search(K key){
+        return searchRecursive(key, root);
     }
 
-    private Movie searchRecursive(Movie m, Node root){
-        if(root == null) return null;   // Movie is missing
+    private V searchRecursive(K k, Node root){
+        if(root == null) return null;   // Key is missing
 
-        if(m.compareTo(root.movie) == 0) return root.movie;
+        if(comparator.compare(k, root.key) == 0) return root.value;
 
-        else if(m.compareTo(root.movie) < 0) return searchRecursive(m, root.left);
-        else return searchRecursive(m, root.right);
+        else if(comparator.compare(k, root.key) < 0) return searchRecursive(k, root.left);
+        else return searchRecursive(k, root.right);
     }
 
-    public void remove(Movie m){
-        root = removeRecursive(m, root);
+    @Override
+    public void remove(K key){
+        root = removeRecursive(key, root);
     }
 
-    private Node removeRecursive(Movie m, Node root){
-        if(root == null) return root;    // Movie is missing
+    private Node removeRecursive(K k, Node root){
+        if(root == null) return root;    // Key is missing
 
-        if(m.compareTo(root.movie) == 0){
+        if(comparator.compare(k, root.key) == 0){
             // Case 1: node to be deleted it's a leaf
             if(root.left == null && root.right == null){
                 root = null;
@@ -70,23 +78,26 @@ public class ABR {
             else if(root.right == null) return root.left;
 
             // Case 3: node to be deleted it's an internal node (2 children)
-            root.movie = minSubtree(root.right);
-            root.right = removeRecursive(root.movie, root.right);
+            Node successor = minSubtree(root.right);
+            root.key = successor.key;
+            root.value = successor.value;
+
+            root.right = removeRecursive(root.key, root.right);
         }
 
-        else if(m.compareTo(root.movie) < 0) root.left = removeRecursive(m, root.left);
-        else root.right = removeRecursive(m, root.right);
+        else if(comparator.compare(k, root.key) < 0) root.left = removeRecursive(k, root.left);
+        else root.right = removeRecursive(k, root.right);
 
         return root;
     }
 
-    private Movie minSubtree(Node root){
-        if(root.left == null) return root.movie;
+    private Node minSubtree(Node root){
+        if(root.left == null) return root;
         return minSubtree(root.left);
     }
 
     public void clear(){
         root = null;
-        // TODO: il resto lo gestisce il Garbage Collector?
+        // TODO: il resto lo gestisce il Garbage Collector, right?
     }
 }

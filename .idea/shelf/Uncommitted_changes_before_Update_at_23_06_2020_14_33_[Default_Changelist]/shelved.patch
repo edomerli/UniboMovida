@@ -1,0 +1,270 @@
+Index: src/movida/marromerli/BubbleSort.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package movida.marromerli;\r\n\r\nimport java.util.Comparator;\r\n\r\npublic class BubbleSort<T> implements Sorter {\r\n    @Override\r\n    public void sort(T[] keys, Comparator<T> comparator) {\r\n        int size = keys.length;\r\n\r\n        for (int i = 0; i < size - 1; i++) {\r\n            boolean swapped = false;\r\n\r\n            for (int j = 0; j < size - 1 - i; j++) {\r\n                if (comparator.compare(keys[j], keys[j + 1]) > 0) {\r\n                    Comparable<T> temp = keys[j];\r\n                    keys[j] = keys[j + 1];\r\n                    keys[j + 1] = temp;\r\n\r\n                    swapped = true;\r\n                }\r\n            }\r\n\r\n            if(swapped == false) break;\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/movida/marromerli/BubbleSort.java	(revision 8c65ee8450c490022478b2a219fde2d6fb4af51d)
++++ src/movida/marromerli/BubbleSort.java	(date 1592903803898)
+@@ -1,20 +1,21 @@
+ package movida.marromerli;
+ 
+ import java.util.Comparator;
++import java.util.List;
+ 
+-public class BubbleSort<T> implements Sorter {
++public class BubbleSort<T> implements Sorter<T> {
+     @Override
+-    public void sort(T[] keys, Comparator<T> comparator) {
+-        int size = keys.length;
+-
+-        for (int i = 0; i < size - 1; i++) {
++    public void sort(List<T> keys, Comparator<T> comparator) {
++        int size = keys.size();
++        
++        for(int i = 0; i < size - 1; i++){
+             boolean swapped = false;
+-
+-            for (int j = 0; j < size - 1 - i; j++) {
+-                if (comparator.compare(keys[j], keys[j + 1]) > 0) {
+-                    Comparable<T> temp = keys[j];
+-                    keys[j] = keys[j + 1];
+-                    keys[j + 1] = temp;
++            
++            for(int j = 0; j < size - 1 - i; j++){
++                if(comparator.compare(keys.get(j), keys.get(j+1)) > 0){
++                    T temp = keys.get(j);
++                    keys.set(j, keys.get(j+1));
++                    keys.set(j+1, temp);
+ 
+                     swapped = true;
+                 }
+Index: src/movida/marromerli/ABR.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package movida.marromerli;\r\n\r\nimport movida.commons.Movie;\r\n\r\npublic class ABR {\r\n\r\n    private class Node {\r\n        public Movie movie;\r\n        public Node left, right;\r\n\r\n        public Node(Movie m){\r\n            movie = m;\r\n            left = null;\r\n            right = null;\r\n        }\r\n    }\r\n\r\n    private Node root;\r\n\r\n    public ABR(){\r\n        root = null;\r\n    }\r\n\r\n    public void insert(Movie m){\r\n        root = insertRecursive(m, root);\r\n    }\r\n\r\n    private Node insertRecursive(Movie m, Node root){\r\n        if(root == null){\r\n            Node leaf = new Node(m);\r\n            return root;\r\n        }\r\n\r\n        if(m.compareTo(root.movie) < 0) root.left = insertRecursive(m, root.left);\r\n        else if(m.compareTo(root.movie) > 0) root.right = insertRecursive(m, root.right);\r\n        else root.movie = m;\r\n\r\n        return root;\r\n    }\r\n\r\n    public Movie search(Movie m){\r\n        return searchRecursive(m, root);\r\n    }\r\n\r\n    private Movie searchRecursive(Movie m, Node root){\r\n        if(root == null) return null;   // Movie is missing\r\n\r\n        if(m.compareTo(root.movie) == 0) return root.movie;\r\n\r\n        else if(m.compareTo(root.movie) < 0) return searchRecursive(m, root.left);\r\n        else return searchRecursive(m, root.right);\r\n    }\r\n\r\n    public void remove(Movie m){\r\n        root = removeRecursive(m, root);\r\n    }\r\n\r\n    private Node removeRecursive(Movie m, Node root){\r\n        if(root == null) return root;    // Movie is missing\r\n\r\n        if(m.compareTo(root.movie) == 0){\r\n            // Case 1: node to be deleted it's a leaf\r\n            if(root.left == null && root.right == null){\r\n                root = null;\r\n                return root;\r\n            }\r\n\r\n            // Case 2: node to be deleted has 1 child\r\n            if(root.left == null) return root.right;\r\n            else if(root.right == null) return root.left;\r\n\r\n            // Case 3: node to be deleted it's an internal node (2 children)\r\n            root.movie = minSubtree(root.right);\r\n            root.right = removeRecursive(root.movie, root.right);\r\n        }\r\n\r\n        else if(m.compareTo(root.movie) < 0) root.left = removeRecursive(m, root.left);\r\n        else root.right = removeRecursive(m, root.right);\r\n\r\n        return root;\r\n    }\r\n\r\n    private Movie minSubtree(Node root){\r\n        if(root.left == null) return root.movie;\r\n        return minSubtree(root.left);\r\n    }\r\n\r\n    public void clear(){\r\n        root = null;\r\n        // TODO: il resto lo gestisce il Garbage Collector?\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/movida/marromerli/ABR.java	(revision 8c65ee8450c490022478b2a219fde2d6fb4af51d)
++++ src/movida/marromerli/ABR.java	(date 1592905672732)
+@@ -1,15 +1,19 @@
+ package movida.marromerli;
+ 
+-import movida.commons.Movie;
++import java.util.Comparator;
+ 
+-public class ABR {
++public class ABR<K, V> implements Dictionary<K, V> {
++
++    private Comparator<K> comparator;
+ 
+     private class Node {
+-        public Movie movie;
++        public K key;
++        public V value;
+         public Node left, right;
+ 
+-        public Node(Movie m){
+-            movie = m;
++        public Node(K key, V value){
++            this.key = key;
++            this.value = value;
+             left = null;
+             right = null;
+         }
+@@ -17,48 +21,52 @@
+ 
+     private Node root;
+ 
+-    public ABR(){
++    public ABR(Comparator<K> comparator){
+         root = null;
++        this.comparator = comparator;
+     }
+ 
+-    public void insert(Movie m){
+-        root = insertRecursive(m, root);
++    @Override
++    public void insert(K key, V value){
++        root = insertRecursive(key, value, root);
+     }
+ 
+-    private Node insertRecursive(Movie m, Node root){
++    private Node insertRecursive(K k, V v, Node root){
+         if(root == null){
+-            Node leaf = new Node(m);
+-            return root;
+-        }
++            Node leaf = new Node(k, v);
++            return leaf;
++        }
++
++        if(comparator.compare(k, root.key) < 0) root.left = insertRecursive(k, v, root.left);
++        else if(comparator.compare(k, root.key) > 0) root.right = insertRecursive(k, v, root.right);
++        else root.value = v;
++
++        return root;
++    }
+ 
+-        if(m.compareTo(root.movie) < 0) root.left = insertRecursive(m, root.left);
+-        else if(m.compareTo(root.movie) > 0) root.right = insertRecursive(m, root.right);
+-        else root.movie = m;
+-
+-        return root;
++    @Override
++    public V search(K key){
++        return searchRecursive(key, root);
+     }
+ 
+-    public Movie search(Movie m){
+-        return searchRecursive(m, root);
+-    }
++    private V searchRecursive(K k, Node root){
++        if(root == null) return null;   // Key is missing
+ 
+-    private Movie searchRecursive(Movie m, Node root){
+-        if(root == null) return null;   // Movie is missing
++        if(comparator.compare(k, root.key) == 0) return root.value;
+ 
+-        if(m.compareTo(root.movie) == 0) return root.movie;
+-
+-        else if(m.compareTo(root.movie) < 0) return searchRecursive(m, root.left);
+-        else return searchRecursive(m, root.right);
++        else if(comparator.compare(k, root.key) < 0) return searchRecursive(k, root.left);
++        else return searchRecursive(k, root.right);
+     }
+ 
+-    public void remove(Movie m){
+-        root = removeRecursive(m, root);
++    @Override
++    public void remove(K key){
++        root = removeRecursive(key, root);
+     }
+ 
+-    private Node removeRecursive(Movie m, Node root){
+-        if(root == null) return root;    // Movie is missing
++    private Node removeRecursive(K k, Node root){
++        if(root == null) return root;    // Key is missing
+ 
+-        if(m.compareTo(root.movie) == 0){
++        if(comparator.compare(k, root.key) == 0){
+             // Case 1: node to be deleted it's a leaf
+             if(root.left == null && root.right == null){
+                 root = null;
+@@ -70,23 +78,26 @@
+             else if(root.right == null) return root.left;
+ 
+             // Case 3: node to be deleted it's an internal node (2 children)
+-            root.movie = minSubtree(root.right);
+-            root.right = removeRecursive(root.movie, root.right);
++            Node successor = minSubtree(root.right);
++            root.key = successor.key;
++            root.value = successor.value;
++
++            root.right = removeRecursive(root.key, root.right);
+         }
+ 
+-        else if(m.compareTo(root.movie) < 0) root.left = removeRecursive(m, root.left);
+-        else root.right = removeRecursive(m, root.right);
++        else if(comparator.compare(k, root.key) < 0) root.left = removeRecursive(k, root.left);
++        else root.right = removeRecursive(k, root.right);
+ 
+         return root;
+     }
+ 
+-    private Movie minSubtree(Node root){
+-        if(root.left == null) return root.movie;
++    private Node minSubtree(Node root){
++        if(root.left == null) return root;
+         return minSubtree(root.left);
+     }
+ 
+     public void clear(){
+         root = null;
+-        // TODO: il resto lo gestisce il Garbage Collector?
++        // TODO: il resto lo gestisce il Garbage Collector, right?
+     }
+ }
+\ No newline at end of file
+Index: tests/SortingTests.java
+===================================================================
+--- tests/SortingTests.java	(revision 8c65ee8450c490022478b2a219fde2d6fb4af51d)
++++ tests/SortingTests.java	(revision 8c65ee8450c490022478b2a219fde2d6fb4af51d)
+@@ -1,18 +0,0 @@
+-import static org.junit.jupiter.api.Assertions.assertEquals;
+-import org.junit.jupiter.api.Test;
+-
+-import movida.marromerli.*;
+-
+-package tests;
+-
+-public class SortingTests {
+-
+-    @Test
+-    void FirstTest() {
+-        Integer[] edo = {6, 1, 4, 2, 9, 0};
+-        Sorter s = new BubbleSort();
+-        s.sort(edo, (Integer a, Integer b) -> a - b));
+-        assertEquals(edo, {0, 1, 2, 4, 6, 9});
+-    }
+-
+-}
+\ No newline at end of file
+Index: Movida_Test.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"JAVA_MODULE\" version=\"4\">\r\n  <component name=\"NewModuleRootManager\" inherit-compiler-output=\"true\">\r\n    <exclude-output />\r\n    <content url=\"file://$MODULE_DIR$\">\r\n      <sourceFolder url=\"file://$MODULE_DIR$/src\" isTestSource=\"false\" />\r\n    </content>\r\n    <orderEntry type=\"inheritedJdk\" />\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n</module>\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- Movida_Test.iml	(revision 8c65ee8450c490022478b2a219fde2d6fb4af51d)
++++ Movida_Test.iml	(date 1592902964880)
+@@ -4,9 +4,25 @@
+     <exclude-output />
+     <content url="file://$MODULE_DIR$">
+       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
++      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+     </content>
+     <orderEntry type="inheritedJdk" />
+     <orderEntry type="sourceFolder" forTests="false" />
++    <orderEntry type="module-library" scope="TEST">
++      <library name="JUnit5.4">
++        <CLASSES>
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter/5.4.2/junit-jupiter-5.4.2.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.4.2/junit-jupiter-api-5.4.2.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/opentest4j/opentest4j/1.1.1/opentest4j-1.1.1.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-commons/1.4.2/junit-platform-commons-1.4.2.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-params/5.4.2/junit-jupiter-params-5.4.2.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-engine/5.4.2/junit-jupiter-engine-5.4.2.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-engine/1.4.2/junit-platform-engine-1.4.2.jar!/" />
++        </CLASSES>
++        <JAVADOC />
++        <SOURCES />
++      </library>
++    </orderEntry>
+   </component>
+-</module>
+-
++</module>
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"VcsDirectoryMappings\">\r\n    <mapping directory=\"$PROJECT_DIR$\" vcs=\"Git\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/vcs.xml	(revision 8c65ee8450c490022478b2a219fde2d6fb4af51d)
++++ .idea/vcs.xml	(date 1592902964857)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="VcsDirectoryMappings">
+-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
++    <mapping directory="" vcs="Git" />
+   </component>
+ </project>
+\ No newline at end of file

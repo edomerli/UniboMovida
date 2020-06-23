@@ -1,0 +1,95 @@
+Index: src/movida/marromerli/BubbleSort.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package movida.marromerli;\r\n\r\nimport java.util.Comparator;\r\n\r\npublic class BubbleSort implements Sorter {\r\n    @Override\r\n    public <T> void sort(T[] keys, Comparator<T> comparator){\r\n        int size = keys.length;\r\n        \r\n        for(int i = 0; i < size - 1; i++){\r\n            boolean swapped = false;\r\n            \r\n            for(int j = 0; j < size - 1 - i; j++){\r\n                if(comparator.compare(keys[j], keys[j+1]) > 0){\r\n                    Comparable<T> temp = keys[j];\r\n                    keys[j] = keys[j+1];\r\n                    keys[j+1] = temp;\r\n\r\n                    swapped = true;\r\n                }\r\n            }\r\n\r\n            if(swapped == false) break;\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/movida/marromerli/BubbleSort.java	(revision 5b18612b181e9d000b0727f23bf47f9376e39628)
++++ src/movida/marromerli/BubbleSort.java	(date 1592902608750)
+@@ -12,7 +12,7 @@
+             
+             for(int j = 0; j < size - 1 - i; j++){
+                 if(comparator.compare(keys[j], keys[j+1]) > 0){
+-                    Comparable<T> temp = keys[j];
++                    T temp = keys[j];
+                     keys[j] = keys[j+1];
+                     keys[j+1] = temp;
+ 
+Index: tests/SortingTests.java
+===================================================================
+--- tests/SortingTests.java	(revision 5b18612b181e9d000b0727f23bf47f9376e39628)
++++ tests/SortingTests.java	(revision 5b18612b181e9d000b0727f23bf47f9376e39628)
+@@ -1,18 +0,0 @@
+-import static org.junit.jupiter.api.Assertions.assertEquals;
+-import org.junit.jupiter.api.Test;
+-
+-import movida.marromerli.*;
+-
+-package tests;
+-
+-public class SortingTests {
+-
+-    @Test
+-    void FirstTest() {
+-        Integer[] edo = {6, 1, 4, 2, 9, 0};
+-        Sorter s = new BubbleSort();
+-        s.sort(edo, (Integer a, Integer b) -> a - b));
+-        assertEquals(edo, {0, 1, 2, 4, 6, 9});
+-    }
+-
+-}
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/vcs.xml	(date 1592899431803)
++++ .idea/vcs.xml	(date 1592899431803)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: Movida_Test.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"JAVA_MODULE\" version=\"4\">\r\n  <component name=\"NewModuleRootManager\" inherit-compiler-output=\"true\">\r\n    <exclude-output />\r\n    <content url=\"file://$MODULE_DIR$\">\r\n      <sourceFolder url=\"file://$MODULE_DIR$/src\" isTestSource=\"false\" />\r\n    </content>\r\n    <orderEntry type=\"inheritedJdk\" />\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n</module>\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- Movida_Test.iml	(revision 5b18612b181e9d000b0727f23bf47f9376e39628)
++++ Movida_Test.iml	(date 1592902227300)
+@@ -4,9 +4,25 @@
+     <exclude-output />
+     <content url="file://$MODULE_DIR$">
+       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
++      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+     </content>
+     <orderEntry type="inheritedJdk" />
+     <orderEntry type="sourceFolder" forTests="false" />
++    <orderEntry type="module-library" scope="TEST">
++      <library name="JUnit5.4">
++        <CLASSES>
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter/5.4.2/junit-jupiter-5.4.2.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.4.2/junit-jupiter-api-5.4.2.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/opentest4j/opentest4j/1.1.1/opentest4j-1.1.1.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-commons/1.4.2/junit-platform-commons-1.4.2.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-params/5.4.2/junit-jupiter-params-5.4.2.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-engine/5.4.2/junit-jupiter-engine-5.4.2.jar!/" />
++          <root url="jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-engine/1.4.2/junit-platform-engine-1.4.2.jar!/" />
++        </CLASSES>
++        <JAVADOC />
++        <SOURCES />
++      </library>
++    </orderEntry>
+   </component>
+-</module>
+-
++</module>
+\ No newline at end of file
