@@ -1,7 +1,8 @@
 package movida.marromerli;
 
 import java.util.Comparator;
+import java.util.List;
 
-public interface Sorter {
-    public <T> void sort(T[] keys, Comparator<T> comparator);
+public interface Sorter<T> {
+    void sort(List<T> keys, Comparator<T> comparator);
 }

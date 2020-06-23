@@ -5,20 +5,24 @@ import javafx.util.Pair;
 import java.lang.reflect.Array;
 import java.util.*;
 
-//TODO: I dictionary devono implementare i dictionary standard?
 //TODO: Deve supportare chiavi nulle?
-public class SortedArrayMap<K extends Comparable<K>, V> implements Map<K, V> {
+public class SortedArrayDictionary<K, V> implements Dictionary<K, V> {
     private K[] arrayKeys;
     private V[] arrayValues;
     private Integer arrayCount;
     private Integer arraySize;
+    private Comparator<K> comparator;
 
-    private void doubleSize(){
+    public SortedArrayDictionary(Comparator<K> comparator) {
+        this.comparator = comparator;
+    }
+
+    private void doubleSize() {
         //TODO: Questo è unsafe, ma non vedo soluzioni migliori
         K[] newKeys = (K[]) new Object[this.arraySize * 2];
         V[] newValues = (V[]) new Object[this.arraySize * 2];
 
-        for (int i = 0; i < this.arrayCount; i++){
+        for (int i = 0; i < this.arrayCount; i++) {
             newKeys[i] = this.arrayKeys[i];
             newValues[i] = this.arrayValues[i];
         }
@@ -43,19 +47,18 @@ public class SortedArrayMap<K extends Comparable<K>, V> implements Map<K, V> {
         this.arraySize /= 2;
     }
 
+
     private Pair<Boolean, Integer> keyLookup(K k){
         int min = 0;
         int max = this.arrayCount; //TODO: -1?
         int medium = (min + max) / 2;//TODO: Nome migliore, inizializzazione corretta
-        while(min <= max){
+        while (min <= max) {
             medium = (min + max) / 2;
-            if (k.compareTo(this.arrayKeys[medium]) == 0){
+            if (this.comparator.compare(k, this.arrayKeys[medium]) == 0) {
                 return new Pair<Boolean, Integer>(true, medium);
-            }
-            else if (k.compareTo(this.arrayKeys[medium]) > 0){
+            } else if (this.comparator.compare(k, this.arrayKeys[medium]) > 0) {
                 min = medium;
-            }
-            else {
+            } else {
                 max = medium;
             }
         }
@@ -64,45 +67,10 @@ public class SortedArrayMap<K extends Comparable<K>, V> implements Map<K, V> {
     }
 
     @Override
-    public int size() {
-        return this.arrayCount;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return this.arrayCount == 0;
-    }
-
-    @Override
-    public boolean containsKey(Object o) {
-        //TODO: Controllare tipo?
-        //TODO: Ottimizzare
-        for (int i = 0; i < this.arrayCount; i++) {
-            if (this.arrayKeys[i].equals(o)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean containsValue(Object o) {
-        //TODO: Controllare tipo?
-        for (int i = 0; i < this.arrayCount; i++) {
-            if (this.arrayValues[i].equals(o)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public V get(Object o) {
+    public V search(K key) {
         //TODO: Controllare prima il tipo?
         int min = 0;
         int max = this.arrayCount;
-
-        K key = (K)o;
 
         Pair<Boolean, Integer> lookup = this.keyLookup(key);
 
@@ -117,20 +85,18 @@ public class SortedArrayMap<K extends Comparable<K>, V> implements Map<K, V> {
     }
 
     @Override
-    public V put(K k, V v) {
-        if (this.arrayCount == this.arraySize){
+    public void insert(K k, V v) {
+        if (this.arrayCount == this.arraySize) {
             this.doubleSize();
         }
 
         //TODO: Ottimizzare ricerca?
         int index = 0;
-        for (index = 0; index < this.arrayCount; index++){
-            if (k.compareTo(this.arrayKeys[index]) == 0){
-                V previousValue = this.arrayValues[index];
+        for (index = 0; index < this.arrayCount; index++) {
+            if (this.comparator.compare(k, this.arrayKeys[index]) == 0) {
                 this.arrayValues[index] = v;
-                return previousValue;
-            }
-            else if (k.compareTo(this.arrayKeys[index]) > 0) {
+                //TODO: Ritornare?
+            } else if (this.comparator.compare(k, this.arrayKeys[index]) > 0) {
                 break;
             }
         }
@@ -143,65 +109,15 @@ public class SortedArrayMap<K extends Comparable<K>, V> implements Map<K, V> {
         this.arrayKeys[index] = k;
         this.arrayValues[index] = v;
         this.arrayCount++;
-
-        return v;
     }
 
     @Override
-    public V remove(Object o) {
+    public void remove(K key) {
         //TODO: Controllare prima il tipo?
-        return null;
-    }
-
-    @Override
-    public void putAll(Map<? extends K, ? extends V> map) {
-
     }
 
     @Override
     public void clear() {
         this.arrayCount = 0;
-    }
-
-    @Override
-    public Set<K> keySet() {
-        return null;
-    }
-
-    @Override
-    public Collection<V> values() {
-        return null;
-    }
-
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        return null;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null) {
-            return false;
-        }
-        if (getClass() != o.getClass()) {
-            return false;
-        }
-        SortedArrayMap<K, V> other = (SortedArrayMap<K, V>)o;
-
-        //TODO: Valutare cosa confrontare e come
-
-        return this.arrayCount.equals(other.arrayCount) &&
-                this.arraySize.equals(other.arraySize) &&
-                Arrays.equals(this.arrayKeys, other.arrayKeys) &&
-                Arrays.equals(this.arrayValues, other.arrayValues);
-    }
-
-    @Override
-    public int hashCode() {
-        //TODO: Scegliere un hashCode
-        return 0;
     }
 }
