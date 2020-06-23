@@ -1,10 +1,13 @@
-import movida.marromerli.BubbleSort;
-import movida.marromerli.Sorter;
+package movida.marromerli;
+
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 class BubbleSortTest {
 
@@ -16,7 +19,7 @@ class BubbleSortTest {
         Collections.sort(sorted);
 
         assertEquals(edo, Arrays.asList(starting));
-        Sorter<Integer> s = new BubbleSort();
+        Sorter s = new BubbleSort();
 
         s.sort(edo, (Integer a, Integer b) -> a - b);
         assertEquals(edo, sorted);

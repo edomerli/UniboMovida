@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -23,9 +24,9 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
 
     private Dictionary<String, Movie> moviesByTitle;
-    private Dictionary<Integer, Movie[]> moviesByYear;
-    private Dictionary<String, Movie[]> moviesByDirector;
-    private Dictionary<String, Movie[]> moviesByActor;
+    private Dictionary<Integer, List<Movie>> moviesByYear;
+    private Dictionary<String, List<Movie> moviesByDirector;
+    private Dictionary<String, List<Movie>> moviesByActor;
 
     private CollaborationGraph graph;
 
@@ -46,17 +47,17 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
         if (m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) {
             if(this.mapImplementation != m){
                 if(m == MapImplementation.ArrayOrdinato){
-                    this.moviesByTitle = new SortedArrayDictionary<String, Movie>();
+                    /*this.moviesByTitle = new SortedArrayDictionary<String, Movie>();
                     this.moviesByYear = new SortedArrayDictionary<Integer, Movie[]>();
                     this.moviesByDirector = new SortedArrayDictionary<String, Movie[]>();
-                    this.moviesByActor = new SortedArrayDictionary<String, Movie[]>();
+                    this.moviesByActor = new SortedArrayDictionary<String, Movie[]>();*/
                     // TODO: graph deve usare lo stesso dizionario che e' settato?
                 }
                 else{
                     this.moviesByTitle = new ABR<String, Movie>();
-                    this.moviesByYear = new ABR<Integer, Movie[]>();
-                    this.moviesByDirector = new ABR<String, Movie[]>();
-                    this.moviesByActor = new ABR<String, Movie[]>();
+                    this.moviesByYear = new ABR<Integer, List<Movie>>();
+                    this.moviesByDirector = new ABR<String, List<Movie>>();
+                    this.moviesByActor = new ABR<String, List<Movie>>();
                 }
             }
             this.mapImplementation = m;
@@ -180,16 +181,22 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public Movie[] searchMoviesInYear(Integer year) {
+        List<Movie> results = moviesByYear.search(year);
+        if(results != null) return results.toArray(new Movie[0]);
         return new Movie[0];
     }
 
     @Override
     public Movie[] searchMoviesDirectedBy(String name) {
+        List<Movie> results = moviesByDirector.search(name);
+        if(results != null) return results.toArray(new Movie[0]);
         return new Movie[0];
     }
 
     @Override
     public Movie[] searchMoviesStarredBy(String name) {
+        List<Movie> results = moviesByActor.search(name);
+        if(results != null) return results.toArray(new Movie[0]);
         return new Movie[0];
     }
 
