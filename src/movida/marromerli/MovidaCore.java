@@ -15,25 +15,35 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
     private SortingAlgorithm sortingAlgorithm; //Algoritmo usato
     private MapImplementation mapImplementation; //Implementazione di dizionario usata
 
-    private ArrayList<Movie> movies;
-    private ArrayList<Person> actors;
-    private ArrayList<Person> directors;
+    private List<Movie> moviesOrderedByVotes, moviesOrderedByYear;
+    private List<Person> actors;
+    private List<Person> directors;
     // TODO: E' necessario distinguere attori e direttori in 2 array diversi?
+
+    private boolean moviesSortedByVotes, moviesSortedByYear, actorsSorted;
 
     private Sorter sorter;
 
 
     private Dictionary<String, Movie> moviesByTitle;
     private Dictionary<Integer, List<Movie>> moviesByYear;
-    private Dictionary<String, List<Movie> moviesByDirector;
+    private Dictionary<String, List<Movie>> moviesByDirector;
     private Dictionary<String, List<Movie>> moviesByActor;
 
     private CollaborationGraph graph;
 
     public MovidaCore() {
-        this.movies = new ArrayList<Movie>();
+        this.sortingAlgorithm = null;
+        this.mapImplementation = null;
+
+        this.moviesOrderedByVotes = new ArrayList<Movie>();
+        this.moviesOrderedByYear = new ArrayList<Movie>();
         this.actors = new ArrayList<Person>();
         this.directors = new ArrayList<Person>();
+
+        this.moviesSortedByVotes = false;
+        this.moviesSortedByYear = false;
+        this.actorsSorted = false;
 
         this.moviesByTitle = null;
         this.moviesByYear = null;
@@ -44,22 +54,21 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public boolean setMap(MapImplementation m) {
-        if (m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) {
-            if(this.mapImplementation != m){
-                if(m == MapImplementation.ArrayOrdinato){
-                    /*this.moviesByTitle = new SortedArrayDictionary<String, Movie>();
-                    this.moviesByYear = new SortedArrayDictionary<Integer, Movie[]>();
-                    this.moviesByDirector = new SortedArrayDictionary<String, Movie[]>();
-                    this.moviesByActor = new SortedArrayDictionary<String, Movie[]>();*/
-                    // TODO: graph deve usare lo stesso dizionario che e' settato?
-                }
-                else{
-                    this.moviesByTitle = new ABR<String, Movie>();
-                    this.moviesByYear = new ABR<Integer, List<Movie>>();
-                    this.moviesByDirector = new ABR<String, List<Movie>>();
-                    this.moviesByActor = new ABR<String, List<Movie>>();
-                }
+        if ((m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) && this.mapImplementation != m) {
+            if(m == MapImplementation.ArrayOrdinato){
+                this.moviesByTitle = new SortedArrayDictionary<String, Movie>();
+                this.moviesByYear = new SortedArrayDictionary<Integer, Movie[]>();
+                this.moviesByDirector = new SortedArrayDictionary<String, Movie[]>();
+                this.moviesByActor = new SortedArrayDictionary<String, Movie[]>();
+                // TODO: graph deve usare lo stesso dizionario che e' settato?
             }
+            else{
+                this.moviesByTitle = new ABR<String, Movie>();
+                this.moviesByYear = new ABR<Integer, List<Movie>>();
+                this.moviesByDirector = new ABR<String, List<Movie>>();
+                this.moviesByActor = new ABR<String, List<Movie>>();
+            }
+
             this.mapImplementation = m;
             return true;
         } else {
@@ -70,20 +79,22 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public boolean setSort(SortingAlgorithm a) {
-        if (a == SortingAlgorithm.BubbleSort || a == SortingAlgorithm.QuickSort) {
-            this.sortingAlgorithm = a;
-            
+        if ((a == SortingAlgorithm.BubbleSort || a == SortingAlgorithm.QuickSort) && this.sortingAlgorithm != a) {
+
             if(a == SortingAlgorithm.BubbleSort){
                 sorter = new BubbleSort();
             }
             else sorter = new QuickSort();
 
+            this.sortingAlgorithm = a;
             return true;
         } else {
             return false;
         }
     }
 
+    // TODO: deve anche aggiungere gli attori e i direttori, ma solo quelli non presenti
+    //  (necessari altri dizionari per sapere questa info?)
     @Override
     public void loadFromFile(File f) {
         try {
@@ -107,9 +118,13 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
                     s.nextLine();
                 }
 
-                movies.add(movie);
+                moviesOrderedByVotes.add(movie);
+                moviesOrderedByYear.add(movie);
             }
             s.close();
+
+            this.moviesSortedByVotes = this.moviesSortedByYear = false;
+            // TODO: this.actorsSorted = false;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new MovidaFileException();
@@ -121,7 +136,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
         try {
             FileWriter writer = new FileWriter(f, false);
 
-            for (Movie movie : this.movies) {
+            for (Movie movie : this.moviesOrderedByYear) {
                 writer.append(movie.toString() + "\n\n");
             }
             writer.close();
@@ -138,7 +153,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public int countMovies() {
-        return movies.size();
+        return moviesOrderedByYear.size();
     }
 
     @Override
@@ -163,13 +178,13 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public Movie[] getAllMovies() {
-        return movies.toArray(new Movie[0]);
+        return moviesOrderedByYear.toArray(new Movie[0]);
     }
 
     // TODO: E se un attore fosse anche stato un direttore?? Ritornerei dei duplicati
     @Override
     public Person[] getAllPeople() {
-        ArrayList<Person> people = actors;
+        List<Person> people = actors;
         people.addAll(directors);
         return people.toArray(new Person[0]);
     }
@@ -202,12 +217,28 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public Movie[] searchMostVotedMovies(Integer N) {
-        return new Movie[0];
+        if(!moviesSortedByVotes){
+            // TODO: throw exception se non e' stato settato il sorter?
+            sorter.sort(moviesOrderedByVotes, (Movie a, Movie b) -> a.getVotes() - b.getVotes());
+            moviesSortedByVotes = true;
+        }
+
+        int size = moviesOrderedByVotes.size();
+        if(N >= size) return moviesOrderedByVotes.toArray(new Movie[0]);
+        return moviesOrderedByVotes.subList(size - N, size).toArray(new Movie[0]);
     }
 
     @Override
     public Movie[] searchMostRecentMovies(Integer N) {
-        return new Movie[0];
+        if(!moviesSortedByYear){
+            // TODO: throw exception se non e' stato settato il sorter?
+            sorter.sort(moviesOrderedByYear, (Movie a, Movie b) -> a.getYear() - b.getYear());
+            moviesSortedByYear = true;
+        }
+
+        int size = moviesOrderedByYear.size();
+        if(N >= size) return moviesOrderedByYear.toArray(new Movie[0]);
+        return moviesOrderedByYear.subList(size - N, size).toArray(new Movie[0]);
     }
 
     @Override
