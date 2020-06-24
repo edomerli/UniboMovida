@@ -148,7 +148,16 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public void clear() {
+        moviesOrderedByVotes.clear();
+        moviesOrderedByYear.clear();
+        actors.clear();
+        directors.clear();
 
+        moviesByTitle.clear();
+        moviesByActor.clear();
+        moviesByYear.clear();
+        moviesByDirector.clear();
+        graph.clear();
     }
 
     @Override

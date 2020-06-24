@@ -11,4 +11,8 @@ public class CollaborationGraph {
     public CollaborationGraph() {
         this.graph = new ABR<Person, ArrayList<Collaboration>>();
     }
+
+    public void clear() {
+        this.graph.clear();
+    }
 }
