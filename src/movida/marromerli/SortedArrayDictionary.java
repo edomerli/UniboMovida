@@ -1,10 +1,9 @@
 package movida.marromerli;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Comparator;
 
 //TODO: Deve supportare chiavi nulle?
-public class SortedArrayDictionary<K, V> implements Dictionary<K, V> {
+public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictionary<K, V> {
     private K[] arrayKeys;
     private V[] arrayValues;
     private Integer arrayCount;

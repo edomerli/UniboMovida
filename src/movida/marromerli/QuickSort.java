@@ -4,9 +4,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-public class QuickSort<T> implements Sorter<T> {
+public class QuickSort implements Sorter {
 
-    private int partition(List<T> elements, Comparator<T> comparator, int begin, int end) {
+    private <T> int partition(List<T> elements, Comparator<T> comparator, int begin, int end) {
         int inf = begin;
         int sup = end + 1;
 
@@ -38,7 +38,7 @@ public class QuickSort<T> implements Sorter<T> {
         return sup;
     }
 
-    private void quicksortRecursive(List<T> elements, Comparator<T> comparator, int begin, int end) {
+    private <T> void quicksortRecursive(List<T> elements, Comparator<T> comparator, int begin, int end) {
         if (begin >= end) {
             return;
         }
@@ -48,7 +48,7 @@ public class QuickSort<T> implements Sorter<T> {
     }
 
     @Override
-    public void sort(List<T> keys, Comparator<T> comparator) {
+    public <T> void sort(List<T> keys, Comparator<T> comparator) {
         quicksortRecursive(keys, comparator, 0, keys.size() - 1);
     }
 }
