@@ -60,7 +60,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
                 this.moviesByYear = new SortedArrayDictionary<Integer, Movie[]>();
                 this.moviesByDirector = new SortedArrayDictionary<String, Movie[]>();
                 this.moviesByActor = new SortedArrayDictionary<String, Movie[]>();
-                // TODO: graph deve usare lo stesso dizionario che e' settato?
+                // TODO: graph deve usare lo stesso dizionario che e' settato o uno ce chi pare a noi(fra i settati o non)?
             }
             else{
                 this.moviesByTitle = new ABR<String, Movie>();
@@ -163,12 +163,24 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public boolean deleteMovieByTitle(String title) {
-        return false;
+        Movie toBeDeleted = moviesByTitle.search(title);
+        if(toBeDeleted == null) return false;
+
+        moviesOrderedByYear.remove(toBeDeleted);
+        moviesOrderedByVotes.remove(toBeDeleted);
+
+        moviesByTitle.remove(title);
+        moviesByDirector.search(toBeDeleted.getDirector().getName()).remove(toBeDeleted);
+        moviesByYear.search(toBeDeleted.getYear()).remove(toBeDeleted);
+        for(Person actor : toBeDeleted.getCast()){
+            moviesByActor.search(actor.getName()).remove(toBeDeleted);
+        }
+        return true;
     }
 
     @Override
     public Movie getMovieByTitle(String title) {
-        return null;
+        return moviesByTitle.search(title);
     }
 
     @Override
