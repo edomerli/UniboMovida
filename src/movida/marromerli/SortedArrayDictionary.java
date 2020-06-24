@@ -8,7 +8,6 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
     private V[] arrayValues;
     private Integer arrayCount;
     private Integer arraySize;
-    private Comparator<K> comparator;
 
     class SearchResult {
         private Integer position;
@@ -28,14 +27,16 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
         }
     }
 
-    public SortedArrayDictionary(Comparator<K> comparator) {
-        this.comparator = comparator;
+    public SortedArrayDictionary() {
+        this.arrayCount = 0;
+        resize(1);
     }
 
-    private void doubleSize() {
+    private void resize(int newSize) {
         //TODO: Questo è unsafe, ma non vedo soluzioni migliori
-        K[] newKeys = (K[]) new Object[this.arraySize * 2];
-        V[] newValues = (V[]) new Object[this.arraySize * 2];
+        K[] newKeys = (K[]) new Object[newSize];
+        V[] newValues = (V[]) new Object[newSize];
+        //TODO: Errore se si ridimensiona incorrettamente?
 
         for (int i = 0; i < this.arrayCount; i++) {
             newKeys[i] = this.arrayKeys[i];
@@ -44,34 +45,18 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
 
         this.arrayKeys = newKeys;
         this.arrayValues = newValues;
-        this.arraySize *= 2;
+        this.arraySize = newSize;
     }
-
-    private void halveSize(){
-        //TODO: Questo è unsafe, ma non vedo soluzioni migliori
-        K[] newKeys = (K[]) new Object[this.arraySize / 2];
-        V[] newValues = (V[]) new Object[this.arraySize / 2];
-
-        for (int i = 0; i < this.arrayCount; i++){
-            newKeys[i] = this.arrayKeys[i];
-            newValues[i] = this.arrayValues[i];
-        }
-
-        this.arrayKeys = newKeys;
-        this.arrayValues = newValues;
-        this.arraySize /= 2;
-    }
-
 
     private SearchResult keyLookup(K k) {
         int min = 0;
-        int max = this.arrayCount; //TODO: -1?
+        int max = this.arrayCount;
         int medium = (min + max) / 2;//TODO: Nome migliore, inizializzazione corretta
         while (min <= max) {
             medium = (min + max) / 2;
-            if (this.comparator.compare(k, this.arrayKeys[medium]) == 0) {
+            if (k.compareTo(this.arrayKeys[medium]) == 0) {
                 return new SearchResult(medium, true);
-            } else if (this.comparator.compare(k, this.arrayKeys[medium]) > 0) {
+            } else if (k.compareTo(this.arrayKeys[medium]) > 0) {
                 min = medium;
             } else {
                 max = medium;
@@ -83,17 +68,14 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
 
     @Override
     public V search(K key) {
-        //TODO: Controllare prima il tipo?
         int min = 0;
         int max = this.arrayCount;
 
         SearchResult result = this.keyLookup(key);
 
-        //TODO: Non mi piace molto getKey()
         if (result.getFound()) {
             return this.arrayValues[result.getPosition()];
         } else {
-            //TODO: è comportamento standard?
             return null;
         }
     }
@@ -101,33 +83,39 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
     @Override
     public void insert(K k, V v) {
         if (this.arrayCount == this.arraySize) {
-            this.doubleSize();
+            this.resize(this.arraySize * 2);
         }
 
-        //TODO: Ottimizzare ricerca?
-        int index = 0;
-        for (index = 0; index < this.arrayCount; index++) {
-            if (this.comparator.compare(k, this.arrayKeys[index]) == 0) {
-                this.arrayValues[index] = v;
-                //TODO: Ritornare?
-            } else if (this.comparator.compare(k, this.arrayKeys[index]) > 0) {
-                break;
+        SearchResult result = this.keyLookup(k);
+
+        if (!result.getFound()) {
+            //Sposta gli elementi successivi
+            this.arrayCount++;
+            for (int i = this.arrayCount; i > result.getPosition(); i--) {
+                this.arrayKeys[i] = this.arrayKeys[i - 1];
+                this.arrayValues[i] = this.arrayValues[i - 1];
             }
+
+            //Inserisci la nuova chiave
+            this.arrayKeys[result.getPosition()] = k;
         }
 
-        for (int i = this.arrayCount; i > index; i--) {
-            this.arrayKeys[i] = this.arrayKeys[i - 1];
-            this.arrayValues[i] = this.arrayValues[i - 1];
-        }
-
-        this.arrayKeys[index] = k;
-        this.arrayValues[index] = v;
-        this.arrayCount++;
+        //Inserisci/Sostituisci il valore
+        this.arrayValues[result.getPosition()] = v;
     }
 
     @Override
     public void remove(K key) {
-        //TODO: Controllare prima il tipo?
+        SearchResult result = this.keyLookup(key);
+
+        if (result.getFound()) {
+            //Shift the elements
+            for (int i = result.getPosition(); i < this.arrayCount - 1; i++) {
+                this.arrayKeys[i] = this.arrayKeys[i + 1];
+                this.arrayValues[i] = this.arrayValues[i + 1];
+            }
+            this.arrayCount--;
+        }
     }
 
     @Override

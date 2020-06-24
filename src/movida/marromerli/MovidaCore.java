@@ -7,11 +7,14 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
 
 public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
+    private static final Comparator<Movie> sortByDirector = (movie, t1) -> movie.getDirector().compareTo(t1.getDirector());
+
     private SortingAlgorithm sortingAlgorithm; //Algoritmo usato
     private MapImplementation mapImplementation; //Implementazione di dizionario usata
 
@@ -55,11 +58,11 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
     @Override
     public boolean setMap(MapImplementation m) {
         if ((m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) && this.mapImplementation != m) {
-            if(m == MapImplementation.ArrayOrdinato){
+            if(m == MapImplementation.ArrayOrdinato) {
                 this.moviesByTitle = new SortedArrayDictionary<String, Movie>();
-                this.moviesByYear = new SortedArrayDictionary<Integer, Movie[]>();
-                this.moviesByDirector = new SortedArrayDictionary<String, Movie[]>();
-                this.moviesByActor = new SortedArrayDictionary<String, Movie[]>();
+                this.moviesByYear = new SortedArrayDictionary<Integer, List<Movie>>();
+                this.moviesByDirector = new SortedArrayDictionary<String, List<Movie>>();
+                this.moviesByActor = new SortedArrayDictionary<String, List<Movie>>();
                 // TODO: graph deve usare lo stesso dizionario che e' settato?
             }
             else{
