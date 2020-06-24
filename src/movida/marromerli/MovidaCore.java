@@ -205,9 +205,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
     // TODO: E se un attore fosse anche stato un direttore?? Ritornerei dei duplicati
     @Override
     public Person[] getAllPeople() {
-        List<Person> people = actors;
-        people.addAll(directors);
-        return people.toArray(new Person[0]);
+        return new Person[0];
     }
 
     @Override
