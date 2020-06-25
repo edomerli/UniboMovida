@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CollaborationGraphTest {
     @Test
@@ -57,4 +57,37 @@ public class CollaborationGraphTest {
         assertEquals(graph.getDirectCollaboratorsOf(person3).length, 0);
 
     }
+
+    @Test
+    public void BFSTest() {
+        CollaborationGraph graph = new CollaborationGraph();
+        Person hero1 = new Person("IronMan");
+        Person hero2 = new Person("Hulk");
+        Person hero3 = new Person("Capitan America");
+        Person director1 = new Person("StanLee");
+        Person[] cast1 = new Person[]{hero1, hero2, hero3};
+        Movie movie1 = new Movie("Avengers Endgame", 2020, 99999, cast1, director1);
+        graph.addMovie(movie1);
+
+        Person person1 = new Person("Geronimo Stilton");
+        Person person2 = new Person("Hugh Jackman");
+        Person person3 = new Person("Mickey Mouse");
+        Person director2 = new Person("Quentin Tarantino");
+        Person[] cast2 = new Person[]{person1, person2, person3};
+        Movie movie2 = new Movie("Via col Vento", 2020, 1000, cast2, director2);
+        graph.addMovie(movie2);
+
+        Person[] expectedTeam = new Person[]{hero1, hero3};
+        Arrays.sort(expectedTeam);
+        Person[] actualTeam = graph.getTeamOf(hero2);
+        Arrays.sort(actualTeam);
+        assertArrayEquals(actualTeam, expectedTeam);
+
+        Person[] expectedTeam2 = new Person[]{person2, person3};
+        Arrays.sort(expectedTeam2);
+        Person[] actualTeam2 = graph.getTeamOf(person1);
+        Arrays.sort(actualTeam2);
+        assertArrayEquals(actualTeam2, expectedTeam2);
+    }
+
 }

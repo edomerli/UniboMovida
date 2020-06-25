@@ -147,7 +147,7 @@ public class CollaborationGraph {
                     collaborator = collaboration.getActorA();
                 }
 
-                if(!visited.contains(collaborator)) {
+                if(!visited.contains(collaborator) && collaborator != actor) {
                     visited.add(collaborator);
                     queue.add(collaborator);
                 }
