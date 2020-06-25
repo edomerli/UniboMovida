@@ -121,17 +121,48 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
                     s.nextLine();
                 }
 
-                // Se il film non esisteva prima
+                // TODO: il search potrebbe dover essere case insensitive
                 if(moviesByTitle.search(title) == null) {
                     moviesOrderedByVotes.add(movie);
                     moviesOrderedByYear.add(movie);
                     this.moviesSortedByVotes = this.moviesSortedByYear = false;
 
+                    moviesByTitle.insert(title, movie);
 
+                    // Se non c'era nessun film con quest'anno registrato
+                    if(moviesByYear.search(year) == null){
+                        moviesByYear.insert(year, new ArrayList<>());
+                    }
+                    moviesByYear.search(year).add(movie);
+
+                    // Se non era fra i direttori finora, aggiungilo
+                    if(personByName.search(directorName) == null) {
+                        personByName.insert(directorName, director);
+                        people.add(director);
+                        moviesByDirector.insert(directorName, new ArrayList<>());
+                    }
+                    moviesByDirector.search(directorName).add(movie);
+
+                    for(Person actor : cast) {
+                        String name = actor.getName();
+                        // Se non era fra gli attori finora, aggiungilo
+                        if(moviesByActor.search(name) == null){
+                            actors.add(actor);
+                            moviesByActor.insert(name, new ArrayList<>());
+                            this.actorsSorted = false;
+                        }
+                        moviesByActor.search(name).add(movie);
+
+                        if(personByName.search(name) == null){
+                            personByName.insert(name, actor);
+                            people.add(actor);
+                        }
+                    }
                 }
 
+                // TODO: else - se il film esisteva gia...
 
-                // TODO: this.actorsSorted = false;
+
 
                 // TODO: pusha nel grafo le informazioni
             }
@@ -195,18 +226,22 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
         moviesByTitle.remove(title);
 
-        moviesByDirector.search(toBeDeleted.getDirector().getName()).remove(toBeDeleted);
-        if(moviesByDirector.search(toBeDeleted.getDirector().getName()).size() == 0){
-            moviesByDirector.remove(toBeDeleted.getDirector().getName());
-            if(moviesByActor.search(toBeDeleted.getDirector().getName()) == null) {
+        String directorName = toBeDeleted.getDirector().getName();
+        moviesByDirector.search(directorName).remove(toBeDeleted);
+        if(moviesByDirector.search(directorName).size() == 0){
+            moviesByDirector.remove(directorName);
+
+            // Se non e' anche un attore, rimuovilo dalle persone
+            if(moviesByActor.search(directorName) == null) {
                 people.remove(toBeDeleted.getDirector());
-                personByName.remove(toBeDeleted.getDirector().getName());
+                personByName.remove(directorName);
             }
         }
 
-        moviesByYear.search(toBeDeleted.getYear()).remove(toBeDeleted);
-        if(moviesByYear.search(toBeDeleted.getYear()).size() == 0){
-            moviesByYear.remove(toBeDeleted.getYear());
+        Integer year = toBeDeleted.getYear();
+        moviesByYear.search(year).remove(toBeDeleted);
+        if(moviesByYear.search(year).size() == 0){
+            moviesByYear.remove(year);
         }
 
         for(Person actor : toBeDeleted.getCast()){
@@ -215,6 +250,8 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
             if(moviesByActor.search(name).size() == 0){
                 moviesByActor.remove(name);
                 actors.remove(actor);
+
+                // Se non e' anche un direttore, rimuovilo dalle persone
                 if(moviesByDirector.search(name) == null){
                     people.remove(actor);
                     personByName.remove(name);
