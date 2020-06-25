@@ -4,125 +4,125 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
 
+import static java.lang.Integer.max;
+
 //TODO: Deve supportare chiavi nulle?
 public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictionary<K, V> {
-    private K[] arrayKeys;
-    private V[] arrayValues;
+    private Object[] elements;
     private Integer arrayCount;
-    private Integer arraySize;
 
-    class SearchResult {
-        private Integer position;
-        private Boolean found;
+    private class Pair {
+        private K key;
+        private V value;
 
-        public SearchResult(int position, boolean found) {
-            this.position = position;
-            this.found = found;
+        public Pair(K key, V value) {
+            this.key = key;
+            this.value = value;
         }
 
-        public Boolean getFound() {
-            return found;
+        public K getKey() {
+            return key;
         }
 
-        public Integer getPosition() {
-            return position;
+        public V getValue() {
+            return value;
         }
     }
 
     public SortedArrayDictionary() {
         this.arrayCount = 0;
-        resize(1);
+        resize(0);
     }
 
     private void resize(int newSize) {
         //TODO: Questo è unsafe, ma non vedo soluzioni migliori
-        K[] newKeys = (K[]) new Object[newSize];
-        V[] newValues = (V[]) new Object[newSize];
+        Object[] newElements = new Object[newSize];
         //TODO: Errore se si ridimensiona incorrettamente?
 
         for (int i = 0; i < this.arrayCount; i++) {
-            newKeys[i] = this.arrayKeys[i];
-            newValues[i] = this.arrayValues[i];
+            newElements[i] = this.elements[i];
         }
-
-        this.arrayKeys = newKeys;
-        this.arrayValues = newValues;
-        this.arraySize = newSize;
+        this.elements = newElements;
     }
 
-    private SearchResult keyLookup(K k) {
-        int min = 0;
-        int max = this.arrayCount;
-        int medium = (min + max) / 2;//TODO: Nome migliore, inizializzazione corretta
-        while (min <= max) {
-            medium = (min + max) / 2;
-            if (k.compareTo(this.arrayKeys[medium]) == 0) {
-                return new SearchResult(medium, true);
-            } else if (k.compareTo(this.arrayKeys[medium]) > 0) {
-                min = medium;
-            } else {
-                max = medium;
-            }
-        }
-        //TODO: Qual è la posizione corretta di inserimento?
-        return new SearchResult(medium, false);
-    }
 
     @Override
     public V search(K key) {
-        int min = 0;
-        int max = this.arrayCount;
-
-        SearchResult result = this.keyLookup(key);
-
-        if (result.getFound()) {
-            return this.arrayValues[result.getPosition()];
-        } else {
+        if (this.arrayCount == 0) {
+            //Array vuoto
             return null;
         }
+
+        int min = 0;
+        int max = this.arrayCount - 1;
+        int medium;//TODO: Nome migliore, inizializzazione corretta
+        while (min <= max) {
+            medium = (min + max) / 2;
+            if (key.compareTo(((Pair) this.elements[medium]).getKey()) < 0) {
+                max = medium - 1;
+            } else if (key.compareTo(((Pair) this.elements[medium]).getKey()) > 0) {
+                min = medium + 1;
+            } else {
+                return ((Pair) this.elements[medium]).getValue();
+            }
+        }
+
+        return null;
     }
 
     @Override
     public void insert(K k, V v) {
-        if (this.arrayCount == this.arraySize) {
-            this.resize(this.arraySize * 2);
-        }
-
-        SearchResult result = this.keyLookup(k);
-
-        if (!result.getFound()) {
-            //Sposta gli elementi successivi
-            this.arrayCount++;
-            for (int i = this.arrayCount; i > result.getPosition(); i--) {
-                this.arrayKeys[i] = this.arrayKeys[i - 1];
-                this.arrayValues[i] = this.arrayValues[i - 1];
+        int position = 0;
+        boolean exactMatch = false;
+        while (position < this.arrayCount) {
+            if (k.compareTo(((Pair) this.elements[position]).getKey()) <= 0) {
+                exactMatch = k.compareTo(((Pair) this.elements[position]).getKey()) == 0;
+                break;
             }
-
-            //Inserisci la nuova chiave
-            this.arrayKeys[result.getPosition()] = k;
+            position++;
         }
 
-        //Inserisci/Sostituisci il valore
-        this.arrayValues[result.getPosition()] = v;
+        if (!exactMatch) {
+            if (this.arrayCount.equals(elements.length)) {
+                this.resize(max(elements.length * 2, 1));
+            }
+            this.arrayCount++;
+            //Sposta gli elementi successivi
+            for (int i = this.arrayCount - 1; i > position; i--) {
+                this.elements[i] = this.elements[i - 1];
+            }
+        }
+
+        this.elements[position] = new Pair(k, v);
     }
 
     @Override
     public void remove(K key) {
-        SearchResult result = this.keyLookup(key);
+        int position = 0;
+        while (position < this.arrayCount) {
+            if (key.compareTo(((Pair) this.elements[position]).getKey()) == 0) {
+                break;
+            }
+            position++;
+        }
 
-        if (result.getFound()) {
+        if (position != this.arrayCount) {
             //Shift the elements
-            for (int i = result.getPosition(); i < this.arrayCount - 1; i++) {
-                this.arrayKeys[i] = this.arrayKeys[i + 1];
-                this.arrayValues[i] = this.arrayValues[i + 1];
+            for (int i = position; i < this.arrayCount - 1; i++) {
+                this.elements[i] = this.elements[i + 1];
             }
             this.arrayCount--;
+        }
+
+        if (this.arrayCount > 1 && this.arrayCount == elements.length / 4) {
+            resize(elements.length / 2);
         }
     }
 
     @Override
     public void clear() {
         this.arrayCount = 0;
+        resize(0);
     }
 
     @Override

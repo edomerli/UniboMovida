@@ -27,13 +27,29 @@ public class Person implements Comparable<Person> {
 	public Person(String name) {
 		this.name = name;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return this.name;
 	}
 
-	// Aggiunto
-	public int compareTo(Person p){
+	public int compareTo(Person p) {
 		return this.name.compareTo(p.getName());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Person)) {
+			return false;
+		}
+		Person other = (Person) obj;
+		return this.name.equals(other.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return this.name.hashCode();
 	}
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 
 
-public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
+public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMovidaCollaborations {
     private SortingAlgorithm sortingAlgorithm; //Algoritmo usato
     private MapImplementation mapImplementation; //Implementazione di dizionario usata
 
@@ -44,13 +44,11 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
         this.moviesSortedByVotes = false;
         this.moviesSortedByYear = false;
         this.actorsSorted = false;
-
         this.personByName = new ABR<String, Person>();
         this.moviesByTitle = new ABR<String, Movie>();
         this.moviesByYear = new ABR<Integer, List<Movie>>();
         this.moviesByDirector = new ABR<String, List<Movie>>();
         this.moviesByActor = new ABR<String, List<Movie>>();
-
         this.graph = new CollaborationGraph();
     }
 
@@ -329,7 +327,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
         }
 
         int size = moviesOrderedByYear.size();
-        if(N >= size) return moviesOrderedByYear.toArray(new Movie[0]);
+        if (N >= size) return moviesOrderedByYear.toArray(new Movie[0]);
         return moviesOrderedByYear.subList(size - N, size).toArray(new Movie[0]);
     }
 
@@ -343,5 +341,20 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
         int size = actors.size();
         if(N >= size) return actors.toArray(new Person[0]);
         return actors.subList(size - N, size).toArray(new Person[0]);
+    }
+
+    @Override
+    public Person[] getDirectCollaboratorsOf(Person actor) {
+        return graph.getDirectCollaboratorsOf(actor);
+    }
+
+    @Override
+    public Person[] getTeamOf(Person actor) {
+        return new Person[0];
+    }
+
+    @Override
+    public Collaboration[] maximizeCollaborationsInTheTeamOf(Person actor) {
+        return new Collaboration[0];
     }
 }
