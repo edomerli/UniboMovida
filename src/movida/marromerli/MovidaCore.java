@@ -7,14 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
 
 public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
-    private static final Comparator<Movie> sortByDirector = (movie, t1) -> movie.getDirector().compareTo(t1.getDirector());
-
     private SortingAlgorithm sortingAlgorithm; //Algoritmo usato
     private MapImplementation mapImplementation; //Implementazione di dizionario usata
 
@@ -58,12 +55,12 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
     @Override
     public boolean setMap(MapImplementation m) {
         if ((m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) && this.mapImplementation != m) {
-            if(m == MapImplementation.ArrayOrdinato) {
+            if(m == MapImplementation.ArrayOrdinato){
                 this.moviesByTitle = new SortedArrayDictionary<String, Movie>();
-                this.moviesByYear = new SortedArrayDictionary<Integer, List<Movie>>();
-                this.moviesByDirector = new SortedArrayDictionary<String, List<Movie>>();
-                this.moviesByActor = new SortedArrayDictionary<String, List<Movie>>();
-                // TODO: graph deve usare lo stesso dizionario che e' settato?
+                this.moviesByYear = new SortedArrayDictionary<Integer, Movie[]>();
+                this.moviesByDirector = new SortedArrayDictionary<String, Movie[]>();
+                this.moviesByActor = new SortedArrayDictionary<String, Movie[]>();
+                // TODO: graph deve usare lo stesso dizionario che e' settato o uno ce chi pare a noi(fra i settati o non)?
             }
             else{
                 this.moviesByTitle = new ABR<String, Movie>();
@@ -151,7 +148,16 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public void clear() {
+        moviesOrderedByVotes.clear();
+        moviesOrderedByYear.clear();
+        actors.clear();
+        directors.clear();
 
+        moviesByTitle.clear();
+        moviesByActor.clear();
+        moviesByYear.clear();
+        moviesByDirector.clear();
+        graph.clear();
     }
 
     @Override
@@ -166,12 +172,24 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public boolean deleteMovieByTitle(String title) {
-        return false;
+        Movie toBeDeleted = moviesByTitle.search(title);
+        if(toBeDeleted == null) return false;
+
+        moviesOrderedByYear.remove(toBeDeleted);
+        moviesOrderedByVotes.remove(toBeDeleted);
+
+        moviesByTitle.remove(title);
+        moviesByDirector.search(toBeDeleted.getDirector().getName()).remove(toBeDeleted);
+        moviesByYear.search(toBeDeleted.getYear()).remove(toBeDeleted);
+        for(Person actor : toBeDeleted.getCast()){
+            moviesByActor.search(actor.getName()).remove(toBeDeleted);
+        }
+        return true;
     }
 
     @Override
     public Movie getMovieByTitle(String title) {
-        return null;
+        return moviesByTitle.search(title);
     }
 
     @Override
@@ -187,9 +205,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
     // TODO: E se un attore fosse anche stato un direttore?? Ritornerei dei duplicati
     @Override
     public Person[] getAllPeople() {
-        List<Person> people = actors;
-        people.addAll(directors);
-        return people.toArray(new Person[0]);
+        return new Person[0];
     }
 
     @Override
