@@ -117,8 +117,6 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         }
     }
 
-    // TODO: deve anche aggiungere gli attori e i direttori, ma solo quelli non presenti
-    //  (necessari altri dizionari per sapere questa info?) e generalmente e' incomleto, non pusha a molte delle strutture
     @Override
     public void loadFromFile(File f) {
         try {
