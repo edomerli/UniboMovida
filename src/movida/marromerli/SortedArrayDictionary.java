@@ -1,6 +1,8 @@
 package movida.marromerli;
 
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiPredicate;
 
 //TODO: Deve supportare chiavi nulle?
 public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictionary<K, V> {
@@ -121,5 +123,11 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
     @Override
     public void clear() {
         this.arrayCount = 0;
+    }
+
+    @Override
+    public List<V> searchAll(K key, BiPredicate<K, K> match){
+        // TODO: implement
+        return new ArrayList<V>();
     }
 }

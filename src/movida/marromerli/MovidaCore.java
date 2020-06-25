@@ -18,9 +18,9 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
     private List<Movie> moviesOrderedByVotes, moviesOrderedByYear;
     private List<Person> actors, people;
 
+    private Sorter sorter;
     private boolean moviesSortedByVotes, moviesSortedByYear, actorsSorted;
 
-    private Sorter sorter;
 
     private Dictionary<String, Person> personByName;
 
@@ -50,6 +50,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
         this.moviesByYear = new ABR<Integer, List<Movie>>();
         this.moviesByDirector = new ABR<String, List<Movie>>();
         this.moviesByActor = new ABR<String, List<Movie>>();
+
         this.graph = new CollaborationGraph();
     }
 
@@ -57,11 +58,11 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
     public boolean setMap(MapImplementation m) {
         if ((m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) && this.mapImplementation != m) {
             if(m == MapImplementation.ArrayOrdinato){
-                this.personByName = new SortedArrayDictionary<String, Person>();
+                /*this.personByName = new SortedArrayDictionary<String, Person>();
                 this.moviesByTitle = new SortedArrayDictionary<String, Movie>();
                 this.moviesByYear = new SortedArrayDictionary<Integer, Movie[]>();
                 this.moviesByDirector = new SortedArrayDictionary<String, Movie[]>();
-                this.moviesByActor = new SortedArrayDictionary<String, Movie[]>();
+                this.moviesByActor = new SortedArrayDictionary<String, Movie[]>();*/
             }
             else{
                 this.personByName = new ABR<String, Person>();
@@ -70,13 +71,13 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
                 this.moviesByDirector = new ABR<String, List<Movie>>();
                 this.moviesByActor = new ABR<String, List<Movie>>();
             }
+            //TODO: è necessario ricostruire da capo il database!! (convertire ABR in SortedArray, al massimo attraverso tanti insert)
 
             this.mapImplementation = m;
             return true;
         } else {
             return false;
         }
-        //TODO: è necessario ricostruire da capo il database?
     }
 
     @Override
@@ -120,13 +121,22 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
                     s.nextLine();
                 }
 
-                moviesOrderedByVotes.add(movie);
-                moviesOrderedByYear.add(movie);
+                // Se il film non esisteva prima
+                if(moviesByTitle.search(title) == null) {
+                    moviesOrderedByVotes.add(movie);
+                    moviesOrderedByYear.add(movie);
+                    this.moviesSortedByVotes = this.moviesSortedByYear = false;
+
+
+                }
+
+
+                // TODO: this.actorsSorted = false;
+
+                // TODO: pusha nel grafo le informazioni
             }
             s.close();
 
-            this.moviesSortedByVotes = this.moviesSortedByYear = false;
-            // TODO: this.actorsSorted = false;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new MovidaFileException();
@@ -156,10 +166,12 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
         people.clear();
 
 
+        personByName.clear();
         moviesByTitle.clear();
         moviesByActor.clear();
         moviesByYear.clear();
         moviesByDirector.clear();
+
         graph.clear();
     }
 
@@ -220,7 +232,9 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
     }
 
     @Override
-    public Person getPersonByName(String name) { return personByName.search(name); }
+    public Person getPersonByName(String name) {
+        return personByName.search(name);
+    }
 
     @Override
     public Movie[] getAllMovies() {
@@ -284,6 +298,13 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch {
 
     @Override
     public Person[] searchMostActiveActors(Integer N) {
-        return new Person[0];
+        if(!actorsSorted){
+            sorter.sort(actors, (Person a, Person b) -> moviesByActor.search(a.getName()).size() - moviesByActor.search(a.getName()).size());
+            actorsSorted = true;
+        }
+
+        int size = actors.size();
+        if(N >= size) return actors.toArray(new Person[0]);
+        return actors.subList(size - N, size).toArray(new Person[0]);
     }
 }
