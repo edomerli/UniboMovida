@@ -88,6 +88,21 @@ public class CollaborationGraphTest {
         Person[] actualTeam2 = graph.getTeamOf(person1);
         Arrays.sort(actualTeam2);
         assertArrayEquals(actualTeam2, expectedTeam2);
+
+        Person[] cast3 = new Person[]{hero1, person1};
+        Person director3 = new Person("Edo & Sam");
+        Movie spinoff = new Movie("Via con Thanos", 2021, 8004, cast3, director3);
+        graph.addMovie(spinoff);
+
+        Person[] expectedTeam3 = new Person[]{hero1, hero2, person1, person2, person3};
+        Arrays.sort(expectedTeam3);
+        Person[] actualTeam3 = graph.getTeamOf(hero3);
+        Arrays.sort(actualTeam3);
+        assertArrayEquals(actualTeam3, expectedTeam3);
+
+        graph.removeMovie(spinoff);
+        assertArrayEquals(actualTeam, expectedTeam);
+
     }
 
 }

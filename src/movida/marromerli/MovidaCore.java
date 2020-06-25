@@ -235,7 +235,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
             }
         }
 
-        // TODO: aggiorna collaborationGraph di conseguenza
+        this.graph.removeMovie(toBeDeleted);
         return true;
     }
 
@@ -385,8 +385,6 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
         // TODO: else - se il film esisteva gia...
 
-
-
-        // TODO: pusha nel grafo le informazioni
+        this.graph.addMovie(movie);
     }
 }
