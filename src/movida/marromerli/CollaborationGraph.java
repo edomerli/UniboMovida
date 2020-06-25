@@ -4,16 +4,103 @@ import movida.commons.Collaboration;
 import movida.commons.Movie;
 import movida.commons.Person;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.PriorityQueue;
-import java.util.Set;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class CollaborationGraph {
     private HashMap<Person, Set<Collaboration>> graph;
 
     public CollaborationGraph() {
         this.graph = new HashMap<Person, Set<Collaboration>>();
+    }
+
+    public boolean addCollaboration(Collaboration collaboration) {
+        if (!graph.containsKey(collaboration.getActorA())) {
+            graph.put(collaboration.getActorA(), new HashSet<>());
+        }
+        return graph.get(collaboration.getActorA()).add(collaboration);
+    }
+
+    private void addActor(Person actor) {
+        if (!graph.containsKey(actor)) {
+            graph.put(actor, new HashSet<>());
+        }
+    }
+
+    private void addPair(Person actor1, Person actor2, Movie movie) {
+        Person actorA, actorB;
+        if (actor1.compareTo(actor2) > 0) {
+            actorA = actor1;
+            actorB = actor2;
+        } else {
+            actorA = actor2;
+            actorB = actor1;
+        }
+
+        //Ignorati se sono già presenti
+        addActor(actorA);
+        addActor(actorB);
+
+        Collaboration collaboration = null;
+        Set<Collaboration> collaborations = graph.get(actorA);
+
+        for (Collaboration c : collaborations) {
+            if (c.getActorB().equals(actorB)) {
+                collaboration = c;
+            }
+        }
+
+        if (collaboration == null) {
+            //Non c'è una collaborazione, creiamola
+            collaboration = new Collaboration(actorA, actorB);
+
+            //Aggiungiamo la collaborazione per entrambi
+            graph.get(actorA).add(collaboration);
+            graph.get(actorB).add(collaboration);
+        }
+
+        if (!collaboration.getMovies().contains(movie)) {
+            collaboration.getMovies().add(movie);
+        }
+    }
+
+    //TODO: Ottimizzare?
+    public void addMovie(Movie movie) {
+        for (Person actor1 : movie.getCast()) {
+            for (Person actor2 : movie.getCast()) {
+                if (!actor1.equals(actor2)) {
+                    addPair(actor1, actor2, movie);
+                }
+            }
+        }
+    }
+
+    public void removeMovie(Movie movie) {
+        List<Person> actorsToRemove = new ArrayList<>();
+        for (Person actor : movie.getCast()) {
+            List<Collaboration> collaborationsToRemove = new ArrayList<>();
+            Set<Collaboration> collaborations = graph.get(actor);
+
+            for (Collaboration collaboration : collaborations) {
+                collaboration.getMovies().remove(movie);
+                if (collaboration.getMovies().isEmpty()) {
+                    collaborationsToRemove.add(collaboration);
+                }
+            }
+
+            //Remove empty collaborations
+            for (Collaboration actorToRemove : collaborationsToRemove) {
+                collaborations.remove(actorToRemove);
+            }
+
+            if (collaborations.isEmpty()) {
+                actorsToRemove.add(actor);
+            }
+        }
+
+        for (Person actorToRemove : actorsToRemove) {
+            graph.remove(actorToRemove);
+        }
     }
 
     public void clear() {
@@ -25,7 +112,7 @@ public class CollaborationGraph {
         if (collaborations == null) {
             return new Collaboration[0];
         } else {
-            return (Collaboration[]) collaborations.toArray();
+            return (Collaboration[]) collaborations.toArray(new Collaboration[collaborations.size()]);
         }
     }
 
