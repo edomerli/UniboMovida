@@ -71,7 +71,26 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
             }
 
             for(Movie movie : moviesOrderedByVotes){
-                importMovie(movie);
+
+                String title = movie.getTitle();
+                Integer year = movie.getYear();
+                Person director = movie.getDirector();
+                String directorName = director.getName();
+                Person[] cast = movie.getCast();
+
+                personByName.insert(directorName, director);
+                moviesByTitle.insert(title, movie);
+                if(moviesByYear.search(year) == null) moviesByYear.insert(year, new ArrayList<>());
+                moviesByYear.search(year).add(movie);
+                if(moviesByDirector.search(directorName) == null) moviesByDirector.insert(directorName, new ArrayList<>());
+                moviesByDirector.search(directorName).add(movie);
+
+                for(Person actor : cast){
+                    String name = actor.getName();
+                    if(moviesByActor.search(name) == null) moviesByActor.insert(name);
+                    moviesByActor.search(name).add(movie);
+                }
+
             }
 
             this.mapImplementation = m;
