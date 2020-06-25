@@ -1,5 +1,9 @@
 package movida.marromerli;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiPredicate;
+
 public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
 
     private class Node {
@@ -91,8 +95,23 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
         return minSubtree(root.left);
     }
 
+    @Override
     public void clear(){
         root = null;
-        // TODO: il resto lo gestisce il Garbage Collector, right?
+    }
+
+    @Override
+    public List<V> searchAll(K key, BiPredicate<K, K> match){
+        return searchAllRecursive(key, match, root);
+    }
+
+    private List<V> searchAllRecursive(K k, BiPredicate<K, K> match, Node root){
+        if(root == null) return new ArrayList<V>();
+
+        List<V> resultsRecursive = searchAllRecursive(k, match, root.left);
+        resultsRecursive.addAll(searchAllRecursive(k, match, root.right));
+        if(match.test(root.key, k)) resultsRecursive.add(root.value);
+
+        return resultsRecursive;
     }
 }

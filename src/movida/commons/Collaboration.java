@@ -7,11 +7,13 @@ public class Collaboration {
 	Person actorA;
 	Person actorB;
 	ArrayList<Movie> movies;
+	Integer count;
 
 	public Collaboration(Person actorA, Person actorB) {
 		this.actorA = actorA;
 		this.actorB = actorB;
 		this.movies = new ArrayList<Movie>();
+		this.count = 1;
 	}
 
 	public Person getActorA() {
@@ -31,5 +33,4 @@ public class Collaboration {
 
 		return score / movies.size();
 	}
-
 }

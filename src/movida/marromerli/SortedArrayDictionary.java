@@ -1,6 +1,8 @@
 package movida.marromerli;
 
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiPredicate;
 
 import static java.lang.Integer.max;
 
@@ -121,5 +123,11 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
     public void clear() {
         this.arrayCount = 0;
         resize(0);
+    }
+
+    @Override
+    public List<V> searchAll(K key, BiPredicate<K, K> match){
+        // TODO: implement
+        return new ArrayList<V>();
     }
 }
