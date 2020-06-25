@@ -87,7 +87,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
                 for(Person actor : cast){
                     String name = actor.getName();
-                    if(moviesByActor.search(name) == null) moviesByActor.insert(name);
+                    if (moviesByActor.search(name) == null) moviesByActor.insert(name, new ArrayList<>());
                     moviesByActor.search(name).add(movie);
                 }
 
