@@ -33,4 +33,23 @@ public class Collaboration {
 
 		return score / movies.size();
 	}
+
+	public ArrayList<Movie> getMovies() {
+		return movies;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Collaboration)) {
+			return false;
+		}
+		Collaboration other = (Collaboration) obj;
+		boolean sameEquals = this.actorA.equals(other.actorA) && this.actorB.equals(other.actorB);
+		boolean symmetricEquals = this.actorA.equals(other.actorB) && this.actorB.equals(other.actorA);
+
+		return sameEquals || symmetricEquals;
+	}
 }
