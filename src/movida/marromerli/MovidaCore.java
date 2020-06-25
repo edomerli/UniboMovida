@@ -56,11 +56,11 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     public boolean setMap(MapImplementation m) {
         if ((m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) && this.mapImplementation != m) {
             if(m == MapImplementation.ArrayOrdinato){
-                /*this.personByName = new SortedArrayDictionary<String, Person>();
+                this.personByName = new SortedArrayDictionary<String, Person>();
                 this.moviesByTitle = new SortedArrayDictionary<String, Movie>();
-                this.moviesByYear = new SortedArrayDictionary<Integer, Movie[]>();
-                this.moviesByDirector = new SortedArrayDictionary<String, Movie[]>();
-                this.moviesByActor = new SortedArrayDictionary<String, Movie[]>();*/
+                this.moviesByYear = new SortedArrayDictionary<Integer, List<Movie>>();
+                this.moviesByDirector = new SortedArrayDictionary<String, List<Movie>>();
+                this.moviesByActor = new SortedArrayDictionary<String, List<Movie>>();
             }
             else{
                 this.personByName = new ABR<String, Person>();
@@ -69,9 +69,13 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                 this.moviesByDirector = new ABR<String, List<Movie>>();
                 this.moviesByActor = new ABR<String, List<Movie>>();
             }
-            //TODO: è necessario ricostruire da capo il database!! (convertire ABR in SortedArray, al massimo attraverso tanti insert)
+
+            for(Movie movie : moviesOrderedByVotes){
+                importMovie(movie);
+            }
 
             this.mapImplementation = m;
+
             return true;
         } else {
             return false;
@@ -119,50 +123,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                     s.nextLine();
                 }
 
-                // TODO: il search potrebbe dover essere case insensitive
-                if(moviesByTitle.search(title) == null) {
-                    moviesOrderedByVotes.add(movie);
-                    moviesOrderedByYear.add(movie);
-                    this.moviesSortedByVotes = this.moviesSortedByYear = false;
-
-                    moviesByTitle.insert(title, movie);
-
-                    // Se non c'era nessun film con quest'anno registrato
-                    if(moviesByYear.search(year) == null){
-                        moviesByYear.insert(year, new ArrayList<>());
-                    }
-                    moviesByYear.search(year).add(movie);
-
-                    // Se non era fra i direttori finora, aggiungilo
-                    if(personByName.search(directorName) == null) {
-                        personByName.insert(directorName, director);
-                        people.add(director);
-                        moviesByDirector.insert(directorName, new ArrayList<>());
-                    }
-                    moviesByDirector.search(directorName).add(movie);
-
-                    for(Person actor : cast) {
-                        String name = actor.getName();
-                        // Se non era fra gli attori finora, aggiungilo
-                        if(moviesByActor.search(name) == null){
-                            actors.add(actor);
-                            moviesByActor.insert(name, new ArrayList<>());
-                            this.actorsSorted = false;
-                        }
-                        moviesByActor.search(name).add(movie);
-
-                        if(personByName.search(name) == null){
-                            personByName.insert(name, actor);
-                            people.add(actor);
-                        }
-                    }
-                }
-
-                // TODO: else - se il film esisteva gia...
-
-
-
-                // TODO: pusha nel grafo le informazioni
+                importMovie(movie);
             }
             s.close();
 
@@ -356,5 +317,59 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     @Override
     public Collaboration[] maximizeCollaborationsInTheTeamOf(Person actor) {
         return new Collaboration[0];
+    }
+
+    private void importMovie(Movie movie){
+
+        String title = movie.getTitle();
+        Integer year = movie.getYear();
+        Person director = movie.getDirector();
+        String directorName = director.getName();
+        Person[] cast = movie.getCast();
+
+        // TODO: il search potrebbe dover essere case insensitive
+        if(moviesByTitle.search(title) == null) {
+            moviesOrderedByVotes.add(movie);
+            moviesOrderedByYear.add(movie);
+            this.moviesSortedByVotes = this.moviesSortedByYear = false;
+
+            moviesByTitle.insert(title, movie);
+
+            // Se non c'era nessun film con quest'anno registrato
+            if(moviesByYear.search(year) == null){
+                moviesByYear.insert(year, new ArrayList<>());
+            }
+            moviesByYear.search(year).add(movie);
+
+            // Se non era fra i direttori finora, aggiungilo
+            if(personByName.search(directorName) == null) {
+                personByName.insert(directorName, director);
+                people.add(director);
+                moviesByDirector.insert(directorName, new ArrayList<>());
+            }
+            moviesByDirector.search(directorName).add(movie);
+
+            for(Person actor : cast) {
+                String name = actor.getName();
+                // Se non era fra gli attori finora, aggiungilo
+                if(moviesByActor.search(name) == null){
+                    actors.add(actor);
+                    moviesByActor.insert(name, new ArrayList<>());
+                    this.actorsSorted = false;
+                }
+                moviesByActor.search(name).add(movie);
+
+                if(personByName.search(name) == null){
+                    personByName.insert(name, actor);
+                    people.add(actor);
+                }
+            }
+        }
+
+        // TODO: else - se il film esisteva gia...
+
+
+
+        // TODO: pusha nel grafo le informazioni
     }
 }
