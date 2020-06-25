@@ -6,12 +6,14 @@ import movida.commons.Person;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 public class CollaborationGraph {
-    private HashMap<Person, ArrayList<Collaboration>> graph;
+    private HashMap<Person, Set<Collaboration>> graph;
 
     public CollaborationGraph() {
-        this.graph = new HashMap<Person, ArrayList<Collaboration>>();
+        this.graph = new HashMap<Person, Set<Collaboration>>();
     }
 
     public void clear() {
