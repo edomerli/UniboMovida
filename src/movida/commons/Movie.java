@@ -89,6 +89,6 @@ public class Movie {
 
 	@Override
 	public int hashCode() {
-		return this.title.hashCode();
-	}
+        return this.title.toLowerCase().hashCode();
+    }
 }

@@ -71,7 +71,6 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
             }
 
             for(Movie movie : moviesOrderedByVotes) {
-
                 String title = movie.getTitle();
                 CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
                 Integer year = movie.getYear();

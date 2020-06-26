@@ -50,6 +50,6 @@ public class Person implements Comparable<Person> {
 
 	@Override
 	public int hashCode() {
-		return this.name.hashCode();
+		return this.name.toLowerCase().hashCode();
 	}
 }
