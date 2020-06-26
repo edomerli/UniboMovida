@@ -57,3 +57,9 @@ Year: 1993
 Director: Andrew Davis  	
 Cast: Harrison Ford, Tommy Lee Jones, Sela Ward 
 Votes: 256213
+
+Title: Cape Fear
+Year: 2020
+Director: Martin Scorsese
+Cast: Robert De Niro, Edoardo Merli, Jessica Lange, Samuele Marro
+Votes: 1
