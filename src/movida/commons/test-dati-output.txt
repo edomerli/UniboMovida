@@ -1,126 +1,126 @@
 Title: 3 uomini e una gamba
-Year: 580
-Director: Matteo
-Cast: Giacomo, Anna, Giovanni, Francesca
-Votes: 278
+Year: 1496
+Director: Marco
+Cast: Lorenzo, Nike, Andrea, Francesco, Gregorio, Giacomo
+Votes: 1450
 
 Title: Avengers Endgame
-Year: 1279
-Director: Francesco
-Cast: Giovanni, Francesco, Gregorio, Riccardo, Lucia
-Votes: 6326
+Year: 1543
+Director: Anna
+Cast: Luca, Francesco, Matteo, Mirco, Samuele, Francesca, Edoardo, Mattia, Giacomo, Marco, Margherita, Nike, Giovanni, Lucia, Anna, Gregorio
+Votes: 8952
 
 Title: Avengers Age of Ultron
-Year: 897
-Director: Samuele
-Cast: Margherita, Andrea, Riccardo, Francesca, Matteo, Francesco, Samuele, Giacomo, Lucia, Gregorio, Anna, Edoardo, Lorenzo, Giovanni, Luca
-Votes: 7592
+Year: 778
+Director: Anna
+Cast: Giovanni
+Votes: 1296
 
 Title: E.T.
-Year: 1411
-Director: Andrea
-Cast: Gregorio, Giacomo
-Votes: 4578
+Year: 2018
+Director: Lucia
+Cast: Lorenzo, Marco, Samuele, Matteo, Alessio, Francesco, Edoardo, Margherita, Giovanni, Mattia, Riccardo, Nike, Luca, Giacomo
+Votes: 7604
 
 Title: The Shield
-Year: 494
-Director: Anna
-Cast: Luca, Anna, Lorenzo, Matteo, Samuele, Edoardo, Giovanni, Gregorio, Margherita
-Votes: 6018
+Year: 692
+Director: Giovanni
+Cast: Francesca, Francesco, Margherita, Alessio, Andrea, Giacomo, Luca
+Votes: 1037
 
 Title: El Camino
-Year: 262
-Director: Francesca
-Cast: Giacomo, Riccardo, Francesco, Samuele
-Votes: 9476
+Year: 1464
+Director: Giovanni
+Cast: Edoardo, Luca, Marco, Margherita, Nike, Francesca, Mattia, Alessio, Samuele, Anna, Francesco, Lucia, Lorenzo, Matteo, Giovanni
+Votes: 5472
 
 Title: The Simpsons
-Year: 245
-Director: Margherita
-Cast: Margherita, Lorenzo, Anna, Gregorio, Giovanni, Andrea, Luca, Francesca, Samuele, Matteo
-Votes: 451
+Year: 201
+Director: Mirco
+Cast: Anna, Lucia, Matteo, Marco, Francesco, Alessio, Gregorio, Edoardo, Andrea, Francesca, Riccardo
+Votes: 6934
 
 Title: Mission Impossible
-Year: 1892
-Director: Giovanni
-Cast: Margherita, Gregorio, Francesca, Giacomo, Samuele, Matteo, Anna
-Votes: 7801
+Year: 1226
+Director: Samuele
+Cast: Luca, Nike, Lucia, Matteo, Margherita
+Votes: 5173
 
 Title: Pirati dei caraibi
-Year: 538
-Director: Lucia
-Cast: Francesco, Edoardo, Samuele, Giovanni, Lorenzo, Francesca, Andrea, Giacomo
-Votes: 9234
+Year: 898
+Director: Giacomo
+Cast: Nike, Andrea, Matteo, Francesca, Giacomo, Mattia, Samuele, Lucia, Mirco, Luca, Anna, Alessio, Giovanni, Riccardo
+Votes: 5317
 
 Title: Indiana Jones
-Year: 507
-Director: Samuele
-Cast: Matteo, Giovanni
-Votes: 9082
+Year: 1886
+Director: Mirco
+Cast: Marco, Francesco, Edoardo, Margherita, Anna, Nike, Samuele
+Votes: 8159
 
 Title: Jurassic Park
-Year: 332
-Director: Luca
-Cast: Riccardo, Samuele, Francesco
-Votes: 4315
+Year: 262
+Director: Anna
+Cast: Margherita, Samuele, Anna, Lorenzo, Francesco
+Votes: 7577
 
 Title: Inception
-Year: 1328
-Director: Francesco
-Cast: Anna, Luca
-Votes: 6880
+Year: 694
+Director: Lucia
+Cast: Alessio, Lorenzo, Mattia, Francesca, Anna, Gregorio, Giacomo, Marco
+Votes: 5048
 
 Title: KingsMan
-Year: 115
-Director: Luca
-Cast: Riccardo, Giovanni, Francesco, Giacomo, Francesca, Lorenzo, Luca, Andrea, Margherita, Anna, Matteo, Gregorio, Edoardo
-Votes: 9144
+Year: 1794
+Director: Lorenzo
+Cast: Alessio, Samuele, Giacomo, Nike, Andrea, Luca, Marco, Edoardo, Francesco, Mattia, Mirco, Riccardo
+Votes: 5100
 
 Title: Shutter Island
-Year: 1477
+Year: 161
 Director: Andrea
-Cast: Giovanni, Lucia, Gregorio, Anna, Luca, Matteo, Andrea, Edoardo, Giacomo, Francesco, Samuele, Margherita, Lorenzo
-Votes: 5822
+Cast: Gregorio, Mattia, Margherita, Marco, Francesco, Lorenzo, Giovanni, Mirco, Lucia, Andrea, Francesca, Alessio, Luca, Nike, Edoardo, Giacomo
+Votes: 4822
 
 Title: Oceans 8
-Year: 892
-Director: Matteo
-Cast: Anna, Francesca, Matteo, Samuele, Edoardo, Gregorio, Giacomo, Andrea
-Votes: 9577
+Year: 620
+Director: Samuele
+Cast: Anna, Giacomo, Giovanni, Matteo, Gregorio, Mattia, Luca, Marco, Samuele, Lorenzo, Lucia, Francesco, Margherita, Andrea, Alessio
+Votes: 3829
 
 Title: Ant-man
-Year: 549
-Director: Edoardo
-Cast: Andrea, Matteo, Edoardo, Giacomo, Luca, Margherita, Gregorio, Lucia, Lorenzo, Samuele, Anna, Riccardo, Francesco, Giovanni, Francesca
-Votes: 4578
+Year: 506
+Director: Margherita
+Cast: Lorenzo, Gregorio
+Votes: 8096
 
 Title: Harry Potter
-Year: 1282
-Director: Anna
-Cast: Lucia, Giovanni, Andrea, Anna, Luca, Edoardo, Giacomo, Gregorio, Riccardo, Francesco, Francesca
-Votes: 6152
+Year: 1116
+Director: Francesco
+Cast: Alessio, Andrea, Nike, Marco, Anna, Luca, Giacomo
+Votes: 6063
 
 Title: Il signore degli anelli
-Year: 38
+Year: 1924
 Director: Giacomo
-Cast: Lucia, Matteo, Francesco, Anna, Luca, Riccardo, Samuele, Andrea, Giacomo, Francesca, Lorenzo, Giovanni, Margherita, Gregorio
-Votes: 7963
+Cast: Nike, Alessio, Margherita, Anna, Marco, Samuele, Mattia, Matteo, Francesca, Riccardo, Andrea, Luca
+Votes: 884
 
 Title: Spiderman 1
-Year: 262
-Director: Edoardo
-Cast: Lorenzo, Francesco, Margherita, Giacomo, Luca, Samuele, Francesca, Giovanni, Riccardo, Lucia, Andrea, Edoardo, Gregorio, Matteo
-Votes: 7383
+Year: 1995
+Director: Giacomo
+Cast: Lorenzo, Mattia, Edoardo, Mirco, Giovanni, Giacomo, Samuele, Luca, Lucia, Francesco, Matteo, Alessio, Anna, Marco, Nike, Francesca, Gregorio, Riccardo, Margherita
+Votes: 420
 
 Title: La vita è bella
-Year: 1138
-Director: Lorenzo
-Cast: Anna, Margherita, Lucia, Andrea, Riccardo, Luca, Matteo, Giovanni, Gregorio, Edoardo, Lorenzo, Giacomo, Francesco, Francesca, Samuele
-Votes: 7542
+Year: 1507
+Director: Edoardo
+Cast: Andrea, Samuele, Giacomo, Francesco, Marco, Riccardo, Mirco, Alessio, Lorenzo, Margherita, Mattia, Giovanni, Gregorio, Francesca, Luca, Edoardo, Matteo
+Votes: 8725
 
 Title: Che bella giornata
-Year: 1517
-Director: Samuele
-Cast: Lorenzo
-Votes: 7033
+Year: 1874
+Director: Lorenzo
+Cast: Edoardo, Anna, Mattia, Lorenzo, Marco, Andrea, Giacomo
+Votes: 9105
 

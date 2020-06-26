@@ -12,8 +12,8 @@ import java.util.Scanner;
 
 
 public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMovidaCollaborations {
-    private SortingAlgorithm sortingAlgorithm;      //Algoritmo usato
-    private MapImplementation mapImplementation;        //Implementazione di dizionario usata
+    private SortingAlgorithm sortingAlgorithm; //Algoritmo usato
+    private MapImplementation mapImplementation; //Implementazione di dizionario usata
 
     private List<Movie> moviesOrderedByVotes, moviesOrderedByYear;
     private List<Person> actors, people;
