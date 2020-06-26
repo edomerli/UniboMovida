@@ -6,7 +6,6 @@ import java.util.function.BiPredicate;
 
 import static java.lang.Integer.max;
 
-//TODO: Deve supportare chiavi nulle?
 public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictionary<K, V> {
     private Object[] elements;
     private Integer arrayCount;
@@ -37,7 +36,9 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
     private void resize(int newSize) {
         //TODO: Questo è unsafe, ma non vedo soluzioni migliori
         Object[] newElements = new Object[newSize];
-        //TODO: Errore se si ridimensiona incorrettamente?
+        if (newSize < this.arrayCount) {
+            throw new RuntimeException("Dimensione inferiore ad arrayCount.");
+        }
 
         for (int i = 0; i < this.arrayCount; i++) {
             newElements[i] = this.elements[i];

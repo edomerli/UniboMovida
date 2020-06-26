@@ -357,7 +357,6 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         CaseInsensitiveString caseInsensitiveDirectorName = new CaseInsensitiveString(directorName);
         Person[] cast = movie.getCast();
 
-        // TODO: il search potrebbe dover essere case insensitive
         if (moviesByTitle.search(caseInsensitiveTitle) == null) {
             moviesOrderedByVotes.add(movie);
             moviesOrderedByYear.add(movie);
