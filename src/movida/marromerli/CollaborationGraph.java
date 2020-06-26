@@ -90,8 +90,8 @@ public class CollaborationGraph {
             }
 
             //Remove empty collaborations
-            for (Collaboration actorToRemove : collaborationsToRemove) {
-                collaborations.remove(actorToRemove);
+            for (Collaboration collaborationToRemove : collaborationsToRemove) {
+                collaborations.remove(collaborationToRemove);
             }
 
             if (collaborations.isEmpty()) {
@@ -259,8 +259,6 @@ public class CollaborationGraph {
             }
         }
 
-        Collaboration[] collaborations = bestCollaboration.values().toArray(new Collaboration[bestCollaboration.size()]);
-
-        return collaborations;
+        return bestCollaboration.values().toArray(new Collaboration[bestCollaboration.size()]);
     }
 }
