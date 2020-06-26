@@ -52,4 +52,9 @@ public class Collaboration {
 
 		return sameEquals || symmetricEquals;
 	}
+
+	@Override
+	public int hashCode() {
+		return actorA.hashCode() + actorB.hashCode();
+	}
 }

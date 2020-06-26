@@ -57,4 +57,6 @@ public class CollaborationGraphTest {
         assertEquals(graph.getDirectCollaboratorsOf(person3).length, 0);
 
     }
+
+    //TODO: Test MST
 }
