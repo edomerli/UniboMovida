@@ -21,7 +21,7 @@ public class BubbleSort implements Sorter {
                 }
             }
 
-            if(swapped == false) break;
+            if (!swapped) break;
         }
     }
 }

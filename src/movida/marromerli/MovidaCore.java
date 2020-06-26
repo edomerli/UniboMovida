@@ -22,12 +22,12 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     private boolean areMoviesSortedByVotes, areMoviesSortedByYear, areActorsSorted;
 
 
-    private Dictionary<String, Person> personByName;
+    private Dictionary<CaseInsensitiveString, Person> personByName;
 
-    private Dictionary<String, Movie> moviesByTitle;
+    private Dictionary<CaseInsensitiveString, Movie> moviesByTitle;
     private Dictionary<Integer, List<Movie>> moviesByYear;
-    private Dictionary<String, List<Movie>> moviesByDirector;
-    private Dictionary<String, List<Movie>> moviesByActor;
+    private Dictionary<CaseInsensitiveString, List<Movie>> moviesByDirector;
+    private Dictionary<CaseInsensitiveString, List<Movie>> moviesByActor;
 
     private CollaborationGraph graph;
 
@@ -70,25 +70,29 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                 this.moviesByActor = new ABR<>();
             }
 
-            for(Movie movie : moviesOrderedByVotes){
-
+            for(Movie movie : moviesOrderedByVotes) {
                 String title = movie.getTitle();
+                CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
                 Integer year = movie.getYear();
                 Person director = movie.getDirector();
                 String directorName = director.getName();
+                CaseInsensitiveString caseInsensitiveDirectorName = new CaseInsensitiveString(directorName);
                 Person[] cast = movie.getCast();
 
-                personByName.insert(directorName, director);
-                moviesByTitle.insert(title, movie);
-                if(moviesByYear.search(year) == null) moviesByYear.insert(year, new ArrayList<>());
+                personByName.insert(caseInsensitiveDirectorName, director);
+                moviesByTitle.insert(caseInsensitiveTitle, movie);
+                if (moviesByYear.search(year) == null) moviesByYear.insert(year, new ArrayList<>());
                 moviesByYear.search(year).add(movie);
-                if(moviesByDirector.search(directorName) == null) moviesByDirector.insert(directorName, new ArrayList<>());
-                moviesByDirector.search(directorName).add(movie);
+                if (moviesByDirector.search(caseInsensitiveDirectorName) == null)
+                    moviesByDirector.insert(caseInsensitiveDirectorName, new ArrayList<>());
+                moviesByDirector.search(caseInsensitiveDirectorName).add(movie);
 
-                for(Person actor : cast){
+                for (Person actor : cast) {
                     String name = actor.getName();
-                    if(moviesByActor.search(name) == null) moviesByActor.insert(name, new ArrayList<>());
-                    moviesByActor.search(name).add(movie);
+                    CaseInsensitiveString caseInsensitiveName = new CaseInsensitiveString(name);
+                    if (moviesByActor.search(caseInsensitiveName) == null)
+                        moviesByActor.insert(caseInsensitiveName, new ArrayList<>());
+                    moviesByActor.search(caseInsensitiveName).add(movie);
                 }
 
             }
@@ -194,23 +198,25 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
     @Override
     public boolean deleteMovieByTitle(String title) {
-        Movie toBeDeleted = moviesByTitle.search(title);
-        if(toBeDeleted == null) return false;
+        CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
+        Movie toBeDeleted = moviesByTitle.search(caseInsensitiveTitle);
+        if (toBeDeleted == null) return false;
 
         moviesOrderedByYear.remove(toBeDeleted);
         moviesOrderedByVotes.remove(toBeDeleted);
 
-        moviesByTitle.remove(title);
+        moviesByTitle.remove(caseInsensitiveTitle);
 
         String directorName = toBeDeleted.getDirector().getName();
-        moviesByDirector.search(directorName).remove(toBeDeleted);
-        if(moviesByDirector.search(directorName).size() == 0){
-            moviesByDirector.remove(directorName);
+        CaseInsensitiveString caseInsensitiveDirectorName = new CaseInsensitiveString(directorName);
+        moviesByDirector.search(caseInsensitiveDirectorName).remove(toBeDeleted);
+        if (moviesByDirector.search(caseInsensitiveDirectorName).size() == 0) {
+            moviesByDirector.remove(caseInsensitiveDirectorName);
 
             // Se non e' anche un attore, rimuovilo dalle persone
-            if(moviesByActor.search(directorName) == null) {
+            if (moviesByActor.search(caseInsensitiveDirectorName) == null) {
                 people.remove(toBeDeleted.getDirector());
-                personByName.remove(directorName);
+                personByName.remove(caseInsensitiveDirectorName);
             }
         }
 
@@ -220,17 +226,18 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
             moviesByYear.remove(year);
         }
 
-        for(Person actor : toBeDeleted.getCast()){
+        for(Person actor : toBeDeleted.getCast()) {
             String name = actor.getName();
-            moviesByActor.search(name).remove(toBeDeleted);
-            if(moviesByActor.search(name).size() == 0){
-                moviesByActor.remove(name);
+            CaseInsensitiveString caseInsensitiveName = new CaseInsensitiveString(name);
+            moviesByActor.search(caseInsensitiveName).remove(toBeDeleted);
+            if (moviesByActor.search(caseInsensitiveName).size() == 0) {
+                moviesByActor.remove(caseInsensitiveName);
                 actors.remove(actor);
 
                 // Se non e' anche un direttore, rimuovilo dalle persone
-                if(moviesByDirector.search(name) == null){
+                if (moviesByDirector.search(caseInsensitiveName) == null) {
                     people.remove(actor);
-                    personByName.remove(name);
+                    personByName.remove(caseInsensitiveName);
                 }
             }
         }
@@ -241,12 +248,14 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
     @Override
     public Movie getMovieByTitle(String title) {
-        return moviesByTitle.search(title);
+        CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
+        return moviesByTitle.search(caseInsensitiveTitle);
     }
 
     @Override
     public Person getPersonByName(String name) {
-        return personByName.search(name);
+        CaseInsensitiveString caseInsensitiveName = new CaseInsensitiveString(name);
+        return personByName.search(caseInsensitiveName);
     }
 
     @Override
@@ -259,7 +268,8 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
     @Override
     public Movie[] searchMoviesByTitle(String title) {
-        return moviesByTitle.searchAll(title, String::contains).toArray(new Movie[0]);
+        CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
+        return moviesByTitle.searchAll(caseInsensitiveTitle, CaseInsensitiveString::contains).toArray(new Movie[0]);
     }
 
     @Override
@@ -271,15 +281,17 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
     @Override
     public Movie[] searchMoviesDirectedBy(String name) {
-        List<Movie> results = moviesByDirector.search(name);
-        if(results != null) return results.toArray(new Movie[0]);
+        CaseInsensitiveString caseInsensitiveName = new CaseInsensitiveString(name);
+        List<Movie> results = moviesByDirector.search(caseInsensitiveName);
+        if (results != null) return results.toArray(new Movie[0]);
         return new Movie[0];
     }
 
     @Override
     public Movie[] searchMoviesStarredBy(String name) {
-        List<Movie> results = moviesByActor.search(name);
-        if(results != null) return results.toArray(new Movie[0]);
+        CaseInsensitiveString caseInsensitiveName = new CaseInsensitiveString(name);
+        List<Movie> results = moviesByActor.search(caseInsensitiveName);
+        if (results != null) return results.toArray(new Movie[0]);
         return new Movie[0];
     }
 
@@ -335,47 +347,50 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     private void importMovie(Movie movie){
 
         String title = movie.getTitle();
+        CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
         Integer year = movie.getYear();
         Person director = movie.getDirector();
         String directorName = director.getName();
+        CaseInsensitiveString caseInsensitiveDirectorName = new CaseInsensitiveString(directorName);
         Person[] cast = movie.getCast();
 
-        // TODO: il search dove essere case insensitive!
-        if(moviesByTitle.search(title) == null) {
+        // TODO: il search potrebbe dover essere case insensitive
+        if (moviesByTitle.search(caseInsensitiveTitle) == null) {
             moviesOrderedByVotes.add(movie);
             moviesOrderedByYear.add(movie);
             this.areMoviesSortedByVotes = this.areMoviesSortedByYear = false;
 
-            moviesByTitle.insert(title, movie);
+            moviesByTitle.insert(caseInsensitiveTitle, movie);
 
             // Se non c'era nessun film con quest'anno registrato
-            if(moviesByYear.search(year) == null){
+            if (moviesByYear.search(year) == null) {
                 moviesByYear.insert(year, new ArrayList<>());
             }
             moviesByYear.search(year).add(movie);
 
             // Se non era fra i direttori finora, aggiungilo
-            if(personByName.search(directorName) == null) {
-                personByName.insert(directorName, director);
+            if (personByName.search(caseInsensitiveDirectorName) == null) {
+                personByName.insert(caseInsensitiveDirectorName, director);
                 people.add(director);
             }
-            if(moviesByDirector.search(directorName) == null) {
-                moviesByDirector.insert(directorName, new ArrayList<>());
+            if(moviesByDirector.search(caseInsensitiveDirectorName) == null) {
+                moviesByDirector.insert(caseInsensitiveDirectorName, new ArrayList<>());
             }
-            moviesByDirector.search(directorName).add(movie);
+            moviesByDirector.search(caseInsensitiveDirectorName).add(movie);
 
-            for(Person actor : cast) {
+            for (Person actor : cast) {
                 String name = actor.getName();
+                CaseInsensitiveString caseInsensitiveName = new CaseInsensitiveString(name);
                 // Se non era fra gli attori finora, aggiungilo
-                if(moviesByActor.search(name) == null){
-                    moviesByActor.insert(name, new ArrayList<>());
+                if (moviesByActor.search(caseInsensitiveName) == null) {
+                    moviesByActor.insert(caseInsensitiveName, new ArrayList<>());
                     actors.add(actor);
                     this.areActorsSorted = false;
                 }
-                moviesByActor.search(name).add(movie);
+                moviesByActor.search(caseInsensitiveName).add(movie);
 
-                if(personByName.search(name) == null){
-                    personByName.insert(name, actor);
+                if (personByName.search(caseInsensitiveName) == null) {
+                    personByName.insert(caseInsensitiveName, actor);
                     people.add(actor);
                 }
             }

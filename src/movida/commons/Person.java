@@ -45,11 +45,11 @@ public class Person implements Comparable<Person> {
 			return false;
 		}
 		Person other = (Person) obj;
-		return this.name.equals(other.name);
+		return this.name.equalsIgnoreCase(other.name);
 	}
 
 	@Override
 	public int hashCode() {
-		return this.name.hashCode();
+		return this.name.toLowerCase().hashCode();
 	}
 }
