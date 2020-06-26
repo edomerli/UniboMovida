@@ -219,6 +219,10 @@ public class CollaborationGraph {
         public void updatePriority(K key, double newPriority) {
             //Non sappiamo quant'è la sua priorità, ma non
             //importa per l'eliminazione
+            if (!queue.contains(new Entry<>(key, -1))) {
+                throw new RuntimeException("La chiave non esiste.");
+            }
+
             queue.remove(new Entry<>(key, -1));
             queue.add(new Entry<>(key, newPriority));
         }
@@ -228,10 +232,10 @@ public class CollaborationGraph {
         HashMap<Person, Double> d = new HashMap<>();
         HashMap<Person, Collaboration> bestCollaboration = new HashMap<>();
 
-        d.put(actor, 0.0);
+        d.put(actor, Double.NEGATIVE_INFINITY);
 
         DictionaryPriorityQueue<Person> Q = new DictionaryPriorityQueue<>();
-        Q.add(actor, 0.0);
+        Q.add(actor, Double.NEGATIVE_INFINITY);
 
         while (!Q.isEmpty()) {
             Person u = Q.remove();
@@ -243,16 +247,20 @@ public class CollaborationGraph {
                     collaborator = collaboration.getActorA();
                 }
 
-                bestCollaboration.put(collaborator, collaboration);
-
                 if (!d.containsKey(collaborator)) {
                     Q.add(collaborator, -collaboration.getScore());
+                    d.put(collaborator, -collaboration.getScore());
+                    bestCollaboration.put(collaborator, collaboration);
                 } else if (-collaboration.getScore() < d.get(collaborator)) {
                     Q.updatePriority(collaborator, -collaboration.getScore());
+                    d.put(collaborator, -collaboration.getScore());
+                    bestCollaboration.put(collaborator, collaboration);
                 }
             }
         }
 
-        return (Collaboration[]) bestCollaboration.values().toArray();
+        Collaboration[] collaborations = bestCollaboration.values().toArray(new Collaboration[bestCollaboration.size()]);
+
+        return collaborations;
     }
 }

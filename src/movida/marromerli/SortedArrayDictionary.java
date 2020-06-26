@@ -127,7 +127,13 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
 
     @Override
     public List<V> searchAll(K key, BiPredicate<K, K> match){
-        // TODO: implement
-        return new ArrayList<V>();
+        List<V> results = new ArrayList<>();
+        for (int i = 0; i < elements.length; i++) {
+            Pair pair = (Pair) elements[i];
+            if (match.test(pair.getKey(), key)) {
+                results.add(pair.getValue());
+            }
+        }
+        return results;
     }
 }
