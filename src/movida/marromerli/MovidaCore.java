@@ -131,6 +131,12 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                 int year = Integer.parseInt(s.nextLine().split(":")[1].trim());
                 String directorName = s.nextLine().split(":")[1].trim();
                 String[] castNames = s.nextLine().split(":")[1].trim().split(", ");
+
+                //Cast vuoto
+                if (castNames.length == 1 && castNames[0].equals("")) {
+                    castNames = new String[0];
+                }
+
                 int votes = Integer.parseInt(s.nextLine().split(":")[1].trim());
 
                 Person director = new Person(directorName);
