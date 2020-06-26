@@ -12,14 +12,14 @@ import java.util.Scanner;
 
 
 public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMovidaCollaborations {
-    private SortingAlgorithm sortingAlgorithm; //Algoritmo usato
-    private MapImplementation mapImplementation; //Implementazione di dizionario usata
+    private SortingAlgorithm sortingAlgorithm;      //Algoritmo usato
+    private MapImplementation mapImplementation;        //Implementazione di dizionario usata
 
     private List<Movie> moviesOrderedByVotes, moviesOrderedByYear;
     private List<Person> actors, people;
 
     private Sorter sorter;
-    private boolean moviesSortedByVotes, moviesSortedByYear, actorsSorted;
+    private boolean areMoviesSortedByVotes, areMoviesSortedByYear, areActorsSorted;
 
 
     private Dictionary<String, Person> personByName;
@@ -41,9 +41,9 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         this.actors = new ArrayList<>();
         this.people = new ArrayList<>();
 
-        this.moviesSortedByVotes = false;
-        this.moviesSortedByYear = false;
-        this.actorsSorted = false;
+        this.areMoviesSortedByVotes = false;
+        this.areMoviesSortedByYear = false;
+        this.areActorsSorted = false;
         this.personByName = new ABR<>();
         this.moviesByTitle = new ABR<>();
         this.moviesByYear = new ABR<>();
@@ -250,9 +250,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     }
 
     @Override
-    public Movie[] getAllMovies() {
-        return moviesOrderedByYear.toArray(new Movie[0]);
-    }
+    public Movie[] getAllMovies() { return moviesOrderedByYear.toArray(new Movie[0]); }
 
     @Override
     public Person[] getAllPeople() {
@@ -287,9 +285,9 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
     @Override
     public Movie[] searchMostVotedMovies(Integer N) {
-        if(!moviesSortedByVotes){
+        if(!areMoviesSortedByVotes){
             sorter.sort(moviesOrderedByVotes, (Movie a, Movie b) -> a.getVotes() - b.getVotes());
-            moviesSortedByVotes = true;
+            this.areMoviesSortedByVotes = true;
         }
 
         int size = moviesOrderedByVotes.size();
@@ -299,9 +297,9 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
     @Override
     public Movie[] searchMostRecentMovies(Integer N) {
-        if(!moviesSortedByYear){
+        if(!areMoviesSortedByYear){
             sorter.sort(moviesOrderedByYear, (Movie a, Movie b) -> a.getYear() - b.getYear());
-            moviesSortedByYear = true;
+            this.areMoviesSortedByYear = true;
         }
 
         int size = moviesOrderedByYear.size();
@@ -311,9 +309,9 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
     @Override
     public Person[] searchMostActiveActors(Integer N) {
-        if(!actorsSorted){
+        if(!areActorsSorted){
             sorter.sort(actors, (Person a, Person b) -> moviesByActor.search(a.getName()).size() - moviesByActor.search(a.getName()).size());
-            actorsSorted = true;
+            this.areActorsSorted = true;
         }
 
         int size = actors.size();
@@ -328,13 +326,11 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
     @Override
     public Person[] getTeamOf(Person actor) {
-        return new Person[0];
+        return graph.getTeamOf(actor);
     }
 
     @Override
-    public Collaboration[] maximizeCollaborationsInTheTeamOf(Person actor) {
-        return new Collaboration[0];
-    }
+    public Collaboration[] maximizeCollaborationsInTheTeamOf(Person actor) { return graph.maximiseCollaborations(actor); }
 
     private void importMovie(Movie movie){
 
@@ -348,7 +344,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         if(moviesByTitle.search(title) == null) {
             moviesOrderedByVotes.add(movie);
             moviesOrderedByYear.add(movie);
-            this.moviesSortedByVotes = this.moviesSortedByYear = false;
+            this.areMoviesSortedByVotes = this.areMoviesSortedByYear = false;
 
             moviesByTitle.insert(title, movie);
 
@@ -362,6 +358,8 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
             if(personByName.search(directorName) == null) {
                 personByName.insert(directorName, director);
                 people.add(director);
+            }
+            if(moviesByDirector.search(directorName) == null) {
                 moviesByDirector.insert(directorName, new ArrayList<>());
             }
             moviesByDirector.search(directorName).add(movie);
@@ -372,7 +370,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                 if(moviesByActor.search(name) == null){
                     moviesByActor.insert(name, new ArrayList<>());
                     actors.add(actor);
-                    this.actorsSorted = false;
+                    this.areActorsSorted = false;
                 }
                 moviesByActor.search(name).add(movie);
 
@@ -381,6 +379,9 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                     people.add(actor);
                 }
             }
+
+            this.graph.addMovie(movie);
+
         }
 
         else{
@@ -388,6 +389,5 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
             importMovie(movie);
         }
 
-        this.graph.addMovie(movie);
     }
 }
