@@ -3,9 +3,6 @@ package movida.marromerli;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MovidaCoreTest {
 
@@ -18,11 +15,23 @@ class MovidaCoreTest {
         File f = new File(inputPath);
         m.loadFromFile(f);
 
-        System.out.println(Arrays.toString(m.getAllMovies()));
-        boolean deleted = m.deleteMovieByTitle("Cape Fear");
-        System.out.println(deleted);
+        System.out.println(m.getAllMovies().length);
 
         File output = new File(outputPath);
         m.saveToFile(output);
+    }
+
+    @Test
+    public void topKRecent() {
+
+    }
+
+    @Test
+    public void topKVoted() {
+
+    }
+
+    @Test void topKActive() {
+
     }
 }

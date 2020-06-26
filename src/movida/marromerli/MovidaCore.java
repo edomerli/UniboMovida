@@ -36,19 +36,19 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         this.sortingAlgorithm = SortingAlgorithm.QuickSort;
         this.mapImplementation = MapImplementation.ABR;
 
-        this.moviesOrderedByVotes = new ArrayList<Movie>();
-        this.moviesOrderedByYear = new ArrayList<Movie>();
-        this.actors = new ArrayList<Person>();
-        this.people = new ArrayList<Person>();
+        this.moviesOrderedByVotes = new ArrayList<>();
+        this.moviesOrderedByYear = new ArrayList<>();
+        this.actors = new ArrayList<>();
+        this.people = new ArrayList<>();
 
         this.moviesSortedByVotes = false;
         this.moviesSortedByYear = false;
         this.actorsSorted = false;
-        this.personByName = new ABR<String, Person>();
-        this.moviesByTitle = new ABR<String, Movie>();
-        this.moviesByYear = new ABR<Integer, List<Movie>>();
-        this.moviesByDirector = new ABR<String, List<Movie>>();
-        this.moviesByActor = new ABR<String, List<Movie>>();
+        this.personByName = new ABR<>();
+        this.moviesByTitle = new ABR<>();
+        this.moviesByYear = new ABR<>();
+        this.moviesByDirector = new ABR<>();
+        this.moviesByActor = new ABR<>();
         this.graph = new CollaborationGraph();
     }
 
@@ -56,18 +56,18 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     public boolean setMap(MapImplementation m) {
         if ((m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) && this.mapImplementation != m) {
             if(m == MapImplementation.ArrayOrdinato){
-                this.personByName = new SortedArrayDictionary<String, Person>();
-                this.moviesByTitle = new SortedArrayDictionary<String, Movie>();
-                this.moviesByYear = new SortedArrayDictionary<Integer, List<Movie>>();
-                this.moviesByDirector = new SortedArrayDictionary<String, List<Movie>>();
-                this.moviesByActor = new SortedArrayDictionary<String, List<Movie>>();
+                this.personByName = new SortedArrayDictionary<>();
+                this.moviesByTitle = new SortedArrayDictionary<>();
+                this.moviesByYear = new SortedArrayDictionary<>();
+                this.moviesByDirector = new SortedArrayDictionary<>();
+                this.moviesByActor = new SortedArrayDictionary<>();
             }
             else{
-                this.personByName = new ABR<String, Person>();
-                this.moviesByTitle = new ABR<String, Movie>();
-                this.moviesByYear = new ABR<Integer, List<Movie>>();
-                this.moviesByDirector = new ABR<String, List<Movie>>();
-                this.moviesByActor = new ABR<String, List<Movie>>();
+                this.personByName = new ABR<>();
+                this.moviesByTitle = new ABR<>();
+                this.moviesByYear = new ABR<>();
+                this.moviesByDirector = new ABR<>();
+                this.moviesByActor = new ABR<>();
             }
 
             for(Movie movie : moviesOrderedByVotes){
@@ -344,7 +344,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         String directorName = director.getName();
         Person[] cast = movie.getCast();
 
-        // TODO: il search potrebbe dover essere case insensitive
+        // TODO: il search dove essere case insensitive!
         if(moviesByTitle.search(title) == null) {
             moviesOrderedByVotes.add(movie);
             moviesOrderedByYear.add(movie);
@@ -370,8 +370,8 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                 String name = actor.getName();
                 // Se non era fra gli attori finora, aggiungilo
                 if(moviesByActor.search(name) == null){
-                    actors.add(actor);
                     moviesByActor.insert(name, new ArrayList<>());
+                    actors.add(actor);
                     this.actorsSorted = false;
                 }
                 moviesByActor.search(name).add(movie);
@@ -383,7 +383,10 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
             }
         }
 
-        // TODO: else - se il film esisteva gia...
+        else{
+            deleteMovieByTitle(title);
+            importMovie(movie);
+        }
 
         this.graph.addMovie(movie);
     }
