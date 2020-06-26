@@ -4,11 +4,12 @@ import movida.commons.Collaboration;
 import movida.commons.Movie;
 import movida.commons.Person;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class CollaborationGraph {
     private HashMap<Person, Set<Collaboration>> graph;
+
+    // TODO: store the resulting graphs (BFS and MST) to return if nothing changes?
 
     public CollaborationGraph() {
         this.graph = new HashMap<Person, Set<Collaboration>>();
@@ -130,6 +131,32 @@ public class CollaborationGraph {
 
         return collaborators;
     }
+
+    public Person[] getTeamOf(Person actor) {
+        HashSet<Person> visited = new HashSet<>();
+        Queue<Person> queue = new LinkedList<>();
+        queue.add(actor);
+
+        while(!queue.isEmpty()){
+            Person u = queue.poll();
+            for (Collaboration collaboration : getCollaborationsOf(u)) {
+                Person collaborator;
+                if (collaboration.getActorA().equals(u)) {
+                    collaborator = collaboration.getActorB();
+                } else {
+                    collaborator = collaboration.getActorA();
+                }
+
+                if(!visited.contains(collaborator) && collaborator != actor) {
+                    visited.add(collaborator);
+                    queue.add(collaborator);
+                }
+            }
+        }
+
+        return visited.toArray(new Person[0]);
+    }
+
 
     //PriorityQueue implementata per essere più simile in
     //funzionamento alla PriorityQueue studiata a lezione

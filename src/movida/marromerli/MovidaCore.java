@@ -87,7 +87,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
                 for(Person actor : cast){
                     String name = actor.getName();
-                    if (moviesByActor.search(name) == null) moviesByActor.insert(name, new ArrayList<>());
+                    if(moviesByActor.search(name) == null) moviesByActor.insert(name, new ArrayList<>());
                     moviesByActor.search(name).add(movie);
                 }
 
@@ -117,8 +117,6 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         }
     }
 
-    // TODO: deve anche aggiungere gli attori e i direttori, ma solo quelli non presenti
-    //  (necessari altri dizionari per sapere questa info?) e generalmente e' incomleto, non pusha a molte delle strutture
     @Override
     public void loadFromFile(File f) {
         try {
@@ -237,8 +235,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
             }
         }
 
-        // TODO: aggiorna collaborationGraph di conseguenza
-        graph.removeMovie(toBeDeleted);
+        this.graph.removeMovie(toBeDeleted);
         return true;
     }
 
@@ -388,6 +385,6 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
         // TODO: else - se il film esisteva gia...
 
-        graph.addMovie(movie);
+        this.graph.addMovie(movie);
     }
 }
