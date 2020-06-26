@@ -322,7 +322,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     @Override
     public Person[] searchMostActiveActors(Integer N) {
         if(!areActorsSorted){
-            sorter.sort(actors, (Person a, Person b) -> moviesByActor.search(a.getName()).size() - moviesByActor.search(a.getName()).size());
+            sorter.sort(actors, (Person a, Person b) -> moviesByActor.search(new CaseInsensitiveString(a.getName())).size() - moviesByActor.search(new CaseInsensitiveString(a.getName())).size());
             this.areActorsSorted = true;
         }
 
