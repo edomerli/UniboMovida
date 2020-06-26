@@ -5,14 +5,16 @@ import java.util.List;
 import java.util.Random;
 
 public class QuickSort implements Sorter {
+    private Random rand = new Random();
 
     private <T> int partition(List<T> elements, Comparator<T> comparator, int begin, int end) {
         int inf = begin;
         int sup = end + 1;
 
-        Random rand = new Random(); //TODO: Resetta il seed?
-        int pivot = begin + rand.nextInt(end - begin);
+        int pivot = begin + this.rand.nextInt(end - begin + 1);
         T x = elements.get(pivot);
+        elements.set(pivot, elements.get(begin));
+        elements.set(begin, x);
         T temp = null;
 
         while (true) {
@@ -48,7 +50,7 @@ public class QuickSort implements Sorter {
     }
 
     @Override
-    public <T> void sort(List<T> keys, Comparator<T> comparator) {
-        quicksortRecursive(keys, comparator, 0, keys.size() - 1);
+    public <T> void sort(List<T> elements, Comparator<T> comparator) {
+        quicksortRecursive(elements, comparator, 0, elements.size() - 1);
     }
 }
