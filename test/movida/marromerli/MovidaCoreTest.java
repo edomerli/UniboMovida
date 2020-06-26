@@ -47,7 +47,7 @@ class MovidaCoreTest {
             titles.add(choices[i]);
         }
         for(int i=0; i<min(duplicatesN, choices.length); i++){
-            titles.add(choices[i]);
+            titles.add(choices[i].toUpperCase());
         }
         return titles;
     }
@@ -166,6 +166,27 @@ class MovidaCoreTest {
 
         Collections.sort(people);
         Person[] movida_people = m.getAllPeople();
+        Arrays.sort(movida_people);
+        assertArrayEquals(people.toArray(new Person[0]), movida_people);
+
+        m.setMap(MapImplementation.ArrayOrdinato);
+        m.setMap(MapImplementation.ABR);
+
+        assertEquals(num_movies - num_duplicates_titles, m.countMovies());
+        assertEquals(num_people, m.countPeople());
+
+        for(int i=num_duplicates_titles; i<num_movies; ++i) {
+            assertEquals(movies.get(i), m.getMovieByTitle(movies.get(i).getTitle()));
+        }
+
+        for(Person p : people) {
+            assertEquals(p, m.getPersonByName(p.getName()));
+        }
+
+        assertArrayEquals(movies.subList(num_duplicates_titles, movies.size()).toArray(new Movie[0]), m.getAllMovies());
+
+        Collections.sort(people);
+        movida_people = m.getAllPeople();
         Arrays.sort(movida_people);
         assertArrayEquals(people.toArray(new Person[0]), movida_people);
 
