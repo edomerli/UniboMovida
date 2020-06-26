@@ -105,4 +105,39 @@ public class CollaborationGraphTest {
 
     }
 
+    @Test
+    public void MSTTest() {
+        CollaborationGraph graph = new CollaborationGraph();
+        Person person1 = new Person("A");
+        Person person2 = new Person("B");
+        Person person3 = new Person("C");
+        Person person4 = new Person("D");
+        Person director = new Person("Spielberg");
+        Person[] cast1 = new Person[]{person2, person3, person4};
+        Movie movie1 = new Movie("Jurassic Park", 2020, 10, cast1, director);
+
+        Person[] cast2 = new Person[]{person1, person2};
+        Movie movie2 = new Movie("E.T.", 2020, 50, cast2, director);
+
+        graph.addMovie(movie1);
+        graph.addMovie(movie2);
+
+        /*Collaboration collab1 = new Collaboration(person1, person2);
+        Collaboration collab2 = new Collaboration(person2, person3);
+        Collaboration collab3 = new Collaboration(person2, person4);
+        Collaboration collab4 = new Collaboration(person3, person4);
+
+        collab1.getMovies().add(movie2);
+        assertEquals(50.0, collab1.getScore());
+
+        collab2.getMovies().add(movie1);
+        collab3.getMovies().add(movie1);
+        collab4.getMovies().add(movie1);*/
+
+        Collaboration[] actualMST = graph.maximiseCollaborations(person1);
+        double actualMSTScore = 0;
+        for(Collaboration c : actualMST) actualMSTScore += c.getScore();
+        assertEquals(70.0, actualMSTScore);
+
+    }
 }
