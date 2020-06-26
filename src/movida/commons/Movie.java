@@ -84,7 +84,7 @@ public class Movie {
 			return false;
 		}
 		Movie other = (Movie) obj;
-		return this.title.equals(other.title);
+		return this.title.equalsIgnoreCase(other.title);
 	}
 
 	@Override
