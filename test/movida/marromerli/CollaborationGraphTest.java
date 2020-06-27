@@ -22,8 +22,6 @@ public class CollaborationGraphTest {
         Person[] cast = new Person[]{person1, person2, person3};
 
         Collaboration collaboration1 = new Collaboration(person1, person2);
-        assertTrue(graph.addCollaboration(collaboration1));
-        assertFalse(graph.addCollaboration(collaboration1));
 
         graph.clear();
 
