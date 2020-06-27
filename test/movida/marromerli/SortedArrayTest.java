@@ -13,6 +13,7 @@ public class SortedArrayTest {
         assertNull(dictionary.search(82));
         dictionary.insert(50, 20);
         dictionary.insert(60, 30);
+        assertEquals(1, dictionary.searchAll(50, Integer::equals).size());
         assertEquals(dictionary.search(50), (Integer) 20);
         dictionary.insert(50, 40);
         assertEquals(dictionary.search(50), (Integer) 40);

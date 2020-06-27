@@ -105,6 +105,15 @@ public class CollaborationGraphTest {
 
     }
 
+    private double collaborationSum(Collaboration[] collaborations) {
+        double total = 0;
+        for (Collaboration c : collaborations) {
+            total += c.getScore();
+        }
+
+        return total;
+    }
+
     @Test
     public void MSTTest() {
         CollaborationGraph graph = new CollaborationGraph();
@@ -135,9 +144,74 @@ public class CollaborationGraphTest {
         collab4.getMovies().add(movie1);*/
 
         Collaboration[] actualMST = graph.maximiseCollaborations(person1);
-        double actualMSTScore = 0;
-        for(Collaboration c : actualMST) actualMSTScore += c.getScore();
-        assertEquals(70.0, actualMSTScore);
+        assertEquals(70.0, collaborationSum(actualMST));
 
+    }
+
+    @Test
+    public void MSTTest2() {
+        CollaborationGraph graph = new CollaborationGraph();
+
+        Person a = new Person("a");
+        Person b = new Person("b");
+        Person c = new Person("c");
+        Person d = new Person("d");
+        Person e = new Person("e");
+        Person f = new Person("f");
+        Person g = new Person("g");
+        Person h = new Person("h");
+        Person i = new Person("i");
+        Person j = new Person("j");
+        Person k = new Person("k");
+        Person director = new Person("Steven Spielberg");
+
+        Person[] cast1 = new Person[]{a, b};
+        Movie movie1 = new Movie("Movie1", 0, 20, cast1, director);
+        Person[] cast2 = new Person[]{a, c};
+        Movie movie2 = new Movie("Movie2", 0, 5, cast2, director);
+        Person[] cast3 = new Person[]{b, d};
+        Movie movie3 = new Movie("Movie3", 0, 3, cast3, director);
+        Person[] cast4 = new Person[]{c, d};
+        Movie movie4 = new Movie("Movie4", 0, 8, cast4, director);
+        Person[] cast5 = new Person[]{a, e};
+        Movie movie5 = new Movie("Movie5", 0, 10, cast5, director);
+        Person[] cast6 = new Person[]{b, e};
+        Movie movie6 = new Movie("Movie6", 0, 15, cast6, director);
+
+        Person[] cast7 = new Person[]{g, h};
+        Movie movie7 = new Movie("Movie7", 0, 20, cast7, director);
+        Person[] cast8 = new Person[]{f, h};
+        Movie movie8 = new Movie("Movie8", 0, 40, cast8, director);
+        Person[] cast9 = new Person[]{f, g};
+        Movie movie9 = new Movie("Movie9", 0, 10, cast9, director);
+
+        Person[] cast10 = new Person[]{i, j};
+        Movie movie10 = new Movie("Movie10", 0, 10, cast10, director);
+        Person[] cast11 = new Person[]{j, k};
+        Movie movie11 = new Movie("Movie11", 0, 30, cast11, director);
+
+        graph.addMovie(movie1);
+        graph.addMovie(movie2);
+        graph.addMovie(movie3);
+        graph.addMovie(movie4);
+        graph.addMovie(movie5);
+        graph.addMovie(movie6);
+        graph.addMovie(movie7);
+        graph.addMovie(movie8);
+        graph.addMovie(movie9);
+        graph.addMovie(movie10);
+        graph.addMovie(movie11);
+
+        assertEquals(48, collaborationSum(graph.maximiseCollaborations(a)));
+        assertEquals(48, collaborationSum(graph.maximiseCollaborations(b)));
+        assertEquals(48, collaborationSum(graph.maximiseCollaborations(c)));
+        assertEquals(48, collaborationSum(graph.maximiseCollaborations(d)));
+        assertEquals(48, collaborationSum(graph.maximiseCollaborations(e)));
+        assertEquals(60, collaborationSum(graph.maximiseCollaborations(f)));
+        assertEquals(60, collaborationSum(graph.maximiseCollaborations(g)));
+        assertEquals(60, collaborationSum(graph.maximiseCollaborations(h)));
+        assertEquals(40, collaborationSum(graph.maximiseCollaborations(i)));
+        assertEquals(40, collaborationSum(graph.maximiseCollaborations(j)));
+        assertEquals(40, collaborationSum(graph.maximiseCollaborations(k)));
     }
 }

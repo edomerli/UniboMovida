@@ -235,6 +235,31 @@ class MovidaCoreTest {
         assertEquals(2, m.searchMoviesInYear(1997).length);
         assertEquals(2, m.searchMoviesStarredBy("Robert De Niro").length);
         assertEquals(6, m.getDirectCollaboratorsOf(m.getPersonByName("Harrison Ford")).length);
+        assertEquals(m.countMovies(), m.getAllMovies().length);
+        assertEquals(m.countPeople(), m.getAllPeople().length);
+
+        assertEquals(4, m.searchMostVotedMovies(4).length);
+        assertEquals(10, m.searchMostVotedMovies(100).length);
+
+        assertEquals("Pulp Fiction", m.searchMostVotedMovies(2)[0].getTitle());
+        assertEquals("What Lies Beneath", m.searchMostRecentMovies(5)[0].getTitle());
+        assertEquals("Harrison Ford", m.searchMostActiveActors(1)[0].getName());
+
+        assertEquals(8, m.getTeamOf(m.getPersonByName("Nick Nolte")).length);
+        assertEquals(8, m.maximizeCollaborationsInTheTeamOf(new Person("Nick Nolte")).length);
+
+        assertTrue(m.deleteMovieByTitle("Cape Fear"));
+        assertEquals(1, m.searchMoviesDirectedBy("Martin Scorsese").length);
+        assertEquals(0, m.searchMoviesInYear(1991).length);
+        assertEquals(1, m.searchMoviesStarredBy("Robert De Niro").length);
+        assertFalse(m.deleteMovieByTitle("Cape Fear"));
+        assertEquals(0, m.getTeamOf(m.getPersonByName("Nick Nolte")).length);
+        assertEquals(0, m.maximizeCollaborationsInTheTeamOf(new Person("Nick Nolte")).length);
+
+        m.clear();
+
+        assertEquals(0, m.getAllPeople().length);
+
     }
 
     @Test

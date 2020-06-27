@@ -199,7 +199,7 @@ public class CollaborationGraph {
                     collaborator = collaboration.getActorA();
                 }
 
-                if (!visited.contains(collaborator) && collaborator != actor) {
+                if (!visited.contains(collaborator) && !collaborator.equals(actor)) {
                     visited.add(collaborator);
                     queue.add(collaborator);
                 }
@@ -221,13 +221,14 @@ public class CollaborationGraph {
         HashMap<Person, Double> d = new HashMap<>();
         HashMap<Person, Collaboration> bestCollaboration = new HashMap<>();
 
-        d.put(actor, Double.NEGATIVE_INFINITY);
+        d.put(actor, 0.0);
 
         VariablePriorityQueue<Person> Q = new VariablePriorityQueue<>();
-        Q.add(actor, Double.NEGATIVE_INFINITY);
+        Q.add(actor, 0.0);
 
         while (!Q.isEmpty()) {
             Person u = Q.remove();
+            d.put(u, Double.NEGATIVE_INFINITY);
             for (Collaboration collaboration : getCollaborationsOf(u)) {
                 Person collaborator;
                 if (collaboration.getActorA().equals(u)) {
