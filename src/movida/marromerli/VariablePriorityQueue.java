@@ -45,7 +45,7 @@ class VariablePriorityQueue<K extends Comparable<K>> {
 
         @Override
         public int compareTo(Entry<K> entry) {
-            return this.key.compareTo(entry.getKey());
+            return Double.compare(this.priority, entry.priority);
         }
 
         @Override

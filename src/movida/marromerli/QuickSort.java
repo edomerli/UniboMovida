@@ -28,7 +28,7 @@ public class QuickSort implements Sorter {
         T x = elements.get(pivot);
         elements.set(pivot, elements.get(begin));
         elements.set(begin, x);
-        T temp = null;
+        T temp;
 
         while (true) {
             do {

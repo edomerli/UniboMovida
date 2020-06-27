@@ -14,6 +14,9 @@ public class CollaborationGraph {
 
     // TODO: store the resulting graphs (BFS and MST) to return if nothing changes?
 
+    /**
+     * Crea un nuovo CollaborationGraph.
+     */
     public CollaborationGraph() {
         this.graph = new HashMap<Person, Set<Collaboration>>();
     }
@@ -150,7 +153,7 @@ public class CollaborationGraph {
         if (collaborations == null) {
             return new Collaboration[0];
         } else {
-            return (Collaboration[]) collaborations.toArray(new Collaboration[0]);
+            return collaborations.toArray(new Collaboration[0]);
         }
     }
 

@@ -63,8 +63,7 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
      */
     private Node insertRecursive(K k, V v, Node root) {
         if (root == null) {
-            Node leaf = new Node(k, v);
-            return leaf;
+            return new Node(k, v);
         }
 
         if (k.compareTo(root.key) < 0) root.left = insertRecursive(k, v, root.left);
@@ -114,13 +113,12 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
      * @param k La chiave dell'elemento da rimuovere
      */
     private Node removeRecursive(K k, Node root) {
-        if (root == null) return root;    // Key is missing
+        if (root == null) return null;    // Key is missing
 
         if (k.compareTo(root.key) == 0) {
             // Case 1: node to be deleted it's a leaf
             if (root.left == null && root.right == null) {
-                root = null;
-                return root;
+                return null;
             }
 
             // Case 2: node to be deleted has 1 child
