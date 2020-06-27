@@ -6,6 +6,9 @@ import movida.commons.Person;
 
 import java.util.*;
 
+/**
+ * Rappresenta un grafo di collaborazioni tra attori.
+ */
 public class CollaborationGraph {
     private HashMap<Person, Set<Collaboration>> graph;
 
@@ -15,6 +18,7 @@ public class CollaborationGraph {
         this.graph = new HashMap<Person, Set<Collaboration>>();
     }
 
+    //TODO: Viene solo usato nei test, rimuovere?
     public boolean addCollaboration(Collaboration collaboration) {
         if (!graph.containsKey(collaboration.getActorA())) {
             graph.put(collaboration.getActorA(), new HashSet<>());
@@ -22,12 +26,27 @@ public class CollaborationGraph {
         return graph.get(collaboration.getActorA()).add(collaboration);
     }
 
+    /**
+     * Aggiunge un attore. Se l'attore è già presente, non
+     * fa nulla.
+     *
+     * @param actor L'attore da aggiungere
+     */
     private void addActor(Person actor) {
         if (!graph.containsKey(actor)) {
             graph.put(actor, new HashSet<>());
         }
     }
 
+    /**
+     * Aggiunge una coppia di attori che hanno recitato in
+     * uno stesso film. Se sono già stati aggiunti, non fa
+     * nulla.
+     *
+     * @param actor1 Il primo attore da aggiungere
+     * @param actor2 Il secondo attore da aggiungere
+     * @param movie  Il film in cui hanno recitato
+     */
     private void addPair(Person actor1, Person actor2, Movie movie) {
         Person actorA, actorB;
         if (actor1.compareTo(actor2) > 0) {
@@ -65,7 +84,11 @@ public class CollaborationGraph {
         }
     }
 
-    //TODO: Ottimizzare?
+    /**
+     * Aggiunge un film.
+     *
+     * @param movie Il film da aggiungere
+     */
     public void addMovie(Movie movie) {
         for (Person actor1 : movie.getCast()) {
             for (Person actor2 : movie.getCast()) {
@@ -76,6 +99,11 @@ public class CollaborationGraph {
         }
     }
 
+    /**
+     * Rimuove un film
+     *
+     * @param movie Il film da rimuovere
+     */
     public void removeMovie(Movie movie) {
         List<Person> actorsToRemove = new ArrayList<>();
         for (Person actor : movie.getCast()) {
@@ -104,19 +132,34 @@ public class CollaborationGraph {
         }
     }
 
+    /**
+     * Elimina tutti i dati contenuti.
+     */
     public void clear() {
         this.graph.clear();
     }
 
+    /**
+     * Restituisce le collaborazioni di un attore.
+     *
+     * @param actor L'attore considerato
+     * @return Le collaborazioni di <code>actor</code>
+     */
     private Collaboration[] getCollaborationsOf(Person actor) {
         Set<Collaboration> collaborations = graph.get(actor);
         if (collaborations == null) {
             return new Collaboration[0];
         } else {
-            return (Collaboration[]) collaborations.toArray(new Collaboration[collaborations.size()]);
+            return (Collaboration[]) collaborations.toArray(new Collaboration[0]);
         }
     }
 
+    /**
+     * Restituisce i collaboratori diretti di un attore.
+     *
+     * @param actor L'attore considerato
+     * @return Le collaborazioni di <code>actor</code>
+     */
     public Person[] getDirectCollaboratorsOf(Person actor) {
         Collaboration[] collaborations = getCollaborationsOf(actor);
         Person[] collaborators = new Person[collaborations.length];
@@ -132,12 +175,18 @@ public class CollaborationGraph {
         return collaborators;
     }
 
+    /**
+     * Restituisce il gruppo di un attore.
+     *
+     * @param actor L'attore considerato
+     * @return I collaboratori (diretti e indiretti) di <code>actor</code>
+     */
     public Person[] getTeamOf(Person actor) {
         HashSet<Person> visited = new HashSet<>();
         Queue<Person> queue = new LinkedList<>();
         queue.add(actor);
 
-        while(!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             Person u = queue.poll();
             for (Collaboration collaboration : getCollaborationsOf(u)) {
                 Person collaborator;
@@ -147,7 +196,7 @@ public class CollaborationGraph {
                     collaborator = collaboration.getActorA();
                 }
 
-                if(!visited.contains(collaborator) && collaborator != actor) {
+                if (!visited.contains(collaborator) && collaborator != actor) {
                     visited.add(collaborator);
                     queue.add(collaborator);
                 }
@@ -157,84 +206,21 @@ public class CollaborationGraph {
         return visited.toArray(new Person[0]);
     }
 
-
-    //PriorityQueue implementata per essere più simile in
-    //funzionamento alla PriorityQueue studiata a lezione
-    static class DictionaryPriorityQueue<K extends Comparable<K>> {
-        private PriorityQueue<Entry<K>> queue;
-
-        static class Entry<K extends Comparable<K>> implements Comparable<Entry<K>> {
-            private K key;
-            private double priority;
-
-            public Entry(K key, double priority) {
-                this.key = key;
-                this.priority = priority;
-            }
-
-            public K getKey() {
-                return this.key;
-            }
-
-            public double getPriority() {
-                return this.priority;
-            }
-
-            @Override
-            public int compareTo(Entry<K> entry) {
-                return this.key.compareTo(entry.getKey());
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (this == obj) {
-                    return true;
-                }
-                if ((obj instanceof Entry)) {
-                    Entry other = (Entry) obj;
-                    return this.key.equals(other.key);
-                } else {
-                    return false;
-                }
-            }
-        }
-
-        public DictionaryPriorityQueue() {
-            queue = new PriorityQueue<>();
-        }
-
-        public void add(K key, double priority) {
-            queue.add(new Entry<>(key, priority));
-        }
-
-        public K remove() {
-            Entry<K> entry = queue.remove();
-            return entry.getKey();
-        }
-
-        public boolean isEmpty() {
-            return queue.isEmpty();
-        }
-
-        public void updatePriority(K key, double newPriority) {
-            //Non sappiamo quant'è la sua priorità, ma non
-            //importa per l'eliminazione
-            if (!queue.contains(new Entry<>(key, -1))) {
-                throw new RuntimeException("La chiave non esiste.");
-            }
-
-            queue.remove(new Entry<>(key, -1));
-            queue.add(new Entry<>(key, newPriority));
-        }
-    }
-
+    /**
+     * Restituisce l'insieme di collaborazioni di un attore
+     * con il punteggio complessivo più alto.
+     *
+     * @param actor L'attore considerato
+     * @return L'insieme di collaborazioni che massimizza il punteggio
+     * complessivo
+     */
     public Collaboration[] maximiseCollaborations(Person actor) {
         HashMap<Person, Double> d = new HashMap<>();
         HashMap<Person, Collaboration> bestCollaboration = new HashMap<>();
 
         d.put(actor, Double.NEGATIVE_INFINITY);
 
-        DictionaryPriorityQueue<Person> Q = new DictionaryPriorityQueue<>();
+        VariablePriorityQueue<Person> Q = new VariablePriorityQueue<>();
         Q.add(actor, Double.NEGATIVE_INFINITY);
 
         while (!Q.isEmpty()) {
@@ -259,6 +245,6 @@ public class CollaborationGraph {
             }
         }
 
-        return bestCollaboration.values().toArray(new Collaboration[bestCollaboration.size()]);
+        return bestCollaboration.values().toArray(new Collaboration[0]);
     }
 }

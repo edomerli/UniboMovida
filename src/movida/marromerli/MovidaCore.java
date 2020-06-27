@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-
+/**
+ * Classe per gestire un database di film.
+ */
 public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMovidaCollaborations {
     private SortingAlgorithm sortingAlgorithm;      //Algoritmo usato
     private MapImplementation mapImplementation;        //Implementazione di dizionario usata
@@ -31,6 +33,9 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
     private CollaborationGraph graph;
 
+    /**
+     * Crea una nuova MovidaCore.
+     */
     public MovidaCore() {
         // Default choices
         this.sortingAlgorithm = SortingAlgorithm.QuickSort;
@@ -52,17 +57,25 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         this.graph = new CollaborationGraph();
     }
 
+    /**
+     * Seleziona l'implementazione del dizionario
+     * <p>
+     * Se il dizionario scelto non è supportato dall'applicazione
+     * la configurazione non cambia
+     *
+     * @param m l'implementazione da selezionare
+     * @return <code>true</code> se la configurazione è stata modificata, <code>false</code> in caso contrario
+     */
     @Override
     public boolean setMap(MapImplementation m) {
         if ((m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) && this.mapImplementation != m) {
-            if(m == MapImplementation.ArrayOrdinato){
+            if (m == MapImplementation.ArrayOrdinato) {
                 this.personByName = new SortedArrayDictionary<>();
                 this.moviesByTitle = new SortedArrayDictionary<>();
                 this.moviesByYear = new SortedArrayDictionary<>();
                 this.moviesByDirector = new SortedArrayDictionary<>();
                 this.moviesByActor = new SortedArrayDictionary<>();
-            }
-            else{
+            } else{
                 this.personByName = new ABR<>();
                 this.moviesByTitle = new ABR<>();
                 this.moviesByYear = new ABR<>();
@@ -105,14 +118,21 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         }
     }
 
+    /**
+     * Seleziona l'algoritmo di ordinamento.
+     * Se l'algortimo scelto non è supportato dall'applicazione
+     * la configurazione non cambia
+     *
+     * @param a l'algoritmo da selezionare
+     * @return <code>true</code> se la configurazione è stata modificata, <code>false</code> in caso contrario
+     */
     @Override
     public boolean setSort(SortingAlgorithm a) {
         if ((a == SortingAlgorithm.BubbleSort || a == SortingAlgorithm.QuickSort) && this.sortingAlgorithm != a) {
 
-            if(a == SortingAlgorithm.BubbleSort){
+            if (a == SortingAlgorithm.BubbleSort) {
                 sorter = new BubbleSort();
-            }
-            else sorter = new QuickSort();
+            } else sorter = new QuickSort();
 
             this.sortingAlgorithm = a;
             return true;
@@ -121,16 +141,43 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         }
     }
 
+    /**
+     * Carica i dati da un file, organizzato secondo il formato MOVIDA (vedi esempio-formato-dati.txt)
+     * <p>
+     * Un film è identificato in modo univoco dal titolo (case-insensitive), una persona dal nome (case-insensitive).
+     * Semplificazione: non sono gestiti omonimi e film con lo stesso titolo.
+     * <p>
+     * I nuovi dati sono aggiunti a quelli già caricati.
+     * <p>
+     * Se esiste un film con lo stesso titolo il record viene sovrascritto.
+     * Se esiste una persona con lo stesso nome non ne viene creata un'altra.
+     * <p>
+     * Se il file non rispetta il formato, i dati non sono caricati e
+     * viene sollevata un'eccezione.
+     *
+     * @param f il file da cui caricare i dati
+     * @throws MovidaFileException in caso di errore di caricamento
+     */
     @Override
     public void loadFromFile(File f) {
         try {
             Scanner s = new Scanner(f);
             while (s.hasNextLine()) {
-                //TODO: Abbellire?
-                String title = s.nextLine().split(":")[1].trim();
-                int year = Integer.parseInt(s.nextLine().split(":")[1].trim());
-                String directorName = s.nextLine().split(":")[1].trim();
-                String[] castNames = s.nextLine().split(":")[1].trim().split(", ");
+                String[] movieData = new String[4];
+                for (int i = 0; i < 4; i++) {
+                    movieData[i] = s.nextLine().split(":")[1].trim();
+                }
+
+                String title = movieData[0];
+                int year = Integer.parseInt(movieData[1]);
+                String directorName = movieData[2];
+                String[] castNames;
+
+                if (movieData[3].equals("")) {
+                    castNames = new String[0];
+                } else {
+                    castNames = movieData[3].split(", ");
+                }
 
                 //Cast vuoto
                 if (castNames.length == 1 && castNames[0].equals("")) {
@@ -160,6 +207,16 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         }
     }
 
+    /**
+     * Salva tutti i dati su un file.
+     * <p>
+     * Il file è sovrascritto.
+     * Se non è possibile salvare, ad esempio per un problema di permessi o percorsi,
+     * viene sollevata un'eccezione.
+     *
+     * @param f il file su cui salvare i dati
+     * @throws MovidaFileException in caso di errore di salvataggio
+     */
     @Override
     public void saveToFile(File f) {
         try {
@@ -175,6 +232,11 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         }
     }
 
+    /**
+     * Cancella tutti i dati.
+     * <p>
+     * Sarà quindi necessario caricarne altri per proseguire.
+     */
     @Override
     public void clear() {
         moviesOrderedByVotes.clear();
@@ -192,16 +254,33 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         graph.clear();
     }
 
+    /**
+     * Restituisce il numero di film
+     *
+     * @return numero di film totali
+     */
     @Override
     public int countMovies() {
         return moviesOrderedByYear.size();
     }
 
+    /**
+     * Restituisce il numero di persone
+     *
+     * @return numero di persone totali
+     */
     @Override
     public int countPeople() {
         return people.size();
     }
 
+    /**
+     * Cancella il film con un dato titolo, se esiste.
+     *
+     * @param title titolo del film
+     * @return <code>true</code> se il film è stato trovato e cancellato,
+     * <code>false</code> in caso contrario
+     */
     @Override
     public boolean deleteMovieByTitle(String title) {
         CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
@@ -252,39 +331,97 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         return true;
     }
 
+    /**
+     * Restituisce il record associato ad un film
+     *
+     * @param title il titolo del film
+     * @return record associato ad un film
+     */
     @Override
     public Movie getMovieByTitle(String title) {
         CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
         return moviesByTitle.search(caseInsensitiveTitle);
     }
 
+    /**
+     * Restituisce il record associato ad una persona, attore o regista
+     *
+     * @param name il nome della persona
+     * @return record associato ad una persona
+     */
     @Override
     public Person getPersonByName(String name) {
         CaseInsensitiveString caseInsensitiveName = new CaseInsensitiveString(name);
         return personByName.search(caseInsensitiveName);
     }
 
+    /**
+     * Restituisce il vettore di tutti i film
+     *
+     * @return array di film
+     */
     @Override
-    public Movie[] getAllMovies() { return moviesOrderedByYear.toArray(new Movie[0]); }
+    public Movie[] getAllMovies() {
+        return moviesOrderedByYear.toArray(new Movie[0]);
+    }
 
+    /**
+     * Restituisce il vettore di tutte le persone
+     *
+     * @return array di persone
+     */
     @Override
     public Person[] getAllPeople() {
         return people.toArray(new Person[0]);
     }
 
+    /**
+     * Ricerca film per titolo.
+     * <p>
+     * Restituisce i film il cui titolo contiene la stringa
+     * <code>title</code> passata come parametro.
+     * <p>
+     * Per il match esatto usare il metodo <code>getMovieByTitle(String s)</code>
+     * <p>
+     * Restituisce un vettore vuoto se nessun film rispetta il criterio di ricerca.
+     *
+     * @param title titolo del film da cercare
+     * @return array di film
+     */
     @Override
     public Movie[] searchMoviesByTitle(String title) {
         CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
         return moviesByTitle.searchAll(caseInsensitiveTitle, CaseInsensitiveString::contains).toArray(new Movie[0]);
     }
 
+    /**
+     * Ricerca film per anno.
+     * <p>
+     * Restituisce i film usciti in sala nell'anno
+     * <code>anno</code> passato come parametro.
+     * <p>
+     * Restituisce un vettore vuoto se nessun film rispetta il criterio di ricerca.
+     *
+     * @param year anno del film da cercare
+     * @return array di film
+     */
     @Override
     public Movie[] searchMoviesInYear(Integer year) {
         List<Movie> results = moviesByYear.search(year);
-        if(results != null) return results.toArray(new Movie[0]);
+        if (results != null) return results.toArray(new Movie[0]);
         return new Movie[0];
     }
 
+    /**
+     * Ricerca film per regista.
+     * <p>
+     * Restituisce i film diretti dal regista il cui nome è passato come parametro.
+     * <p>
+     * Restituisce un vettore vuoto se nessun film rispetta il criterio di ricerca.
+     *
+     * @param name regista del film da cercare
+     * @return array di film
+     */
     @Override
     public Movie[] searchMoviesDirectedBy(String name) {
         CaseInsensitiveString caseInsensitiveName = new CaseInsensitiveString(name);
@@ -293,6 +430,17 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         return new Movie[0];
     }
 
+    /**
+     * Ricerca film per attore.
+     * <p>
+     * Restituisce i film a cui ha partecipato come attore
+     * la persona il cui nome è passato come parametro.
+     * <p>
+     * Restituisce un vettore vuoto se nessun film rispetta il criterio di ricerca.
+     *
+     * @param name attore coinvolto nel film da cercare
+     * @return array di film
+     */
     @Override
     public Movie[] searchMoviesStarredBy(String name) {
         CaseInsensitiveString caseInsensitiveName = new CaseInsensitiveString(name);
@@ -301,21 +449,45 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         return new Movie[0];
     }
 
+    /**
+     * Ricerca film più votati.
+     * <p>
+     * Restituisce gli <code>N</code> film che hanno
+     * ricevuto più voti, in ordine decrescente di voti.
+     * <p>
+     * Se il numero di film totali è minore di N restituisce tutti i film,
+     * comunque in ordine.
+     *
+     * @param N numero di film che la ricerca deve resistuire
+     * @return array di film
+     */
     @Override
     public Movie[] searchMostVotedMovies(Integer N) {
-        if(!areMoviesSortedByVotes){
+        if (!areMoviesSortedByVotes) {
             sorter.sort(moviesOrderedByVotes, (Movie a, Movie b) -> a.getVotes() - b.getVotes());
             this.areMoviesSortedByVotes = true;
         }
 
         int size = moviesOrderedByVotes.size();
-        if(N >= size) return moviesOrderedByVotes.toArray(new Movie[0]);
+        if (N >= size) return moviesOrderedByVotes.toArray(new Movie[0]);
         return moviesOrderedByVotes.subList(size - N, size).toArray(new Movie[0]);
     }
 
+    /**
+     * Ricerca film più recenti.
+     * <p>
+     * Restituisce gli <code>N</code> film più recenti,
+     * in base all'anno di uscita in sala confrontato con l'anno corrente.
+     * <p>
+     * Se il numero di film totali è minore di N restituisce tutti i film,
+     * comunque in ordine.
+     *
+     * @param N numero di film che la ricerca deve resistuire
+     * @return array di film
+     */
     @Override
     public Movie[] searchMostRecentMovies(Integer N) {
-        if(!areMoviesSortedByYear){
+        if (!areMoviesSortedByYear) {
             sorter.sort(moviesOrderedByYear, (Movie a, Movie b) -> a.getYear() - b.getYear());
             this.areMoviesSortedByYear = true;
         }
@@ -325,33 +497,87 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
         return moviesOrderedByYear.subList(size - N, size).toArray(new Movie[0]);
     }
 
+    /**
+     * Ricerca gli attori più attivi.
+     * <p>
+     * Restituisce gli <code>N</code> attori che hanno partecipato al numero
+     * più alto di film
+     * <p>
+     * Se il numero di attori è minore di N restituisce tutti gli attori,
+     * comunque in ordine.
+     *
+     * @param N numero di attori che la ricerca deve resistuire
+     * @return array di attori
+     */
     @Override
     public Person[] searchMostActiveActors(Integer N) {
-        if(!areActorsSorted){
+        if (!areActorsSorted) {
             sorter.sort(actors, (Person a, Person b) -> moviesByActor.search(new CaseInsensitiveString(a.getName())).size() - moviesByActor.search(new CaseInsensitiveString(a.getName())).size());
             this.areActorsSorted = true;
         }
 
         int size = actors.size();
-        if(N >= size) return actors.toArray(new Person[0]);
+        if (N >= size) return actors.toArray(new Person[0]);
         return actors.subList(size - N, size).toArray(new Person[0]);
     }
 
+    /**
+     * Identificazione delle collaborazioni
+     * dirette di un attore
+     * <p>
+     * Restituisce gli attori che hanno partecipato
+     * ad almeno un film con l'attore
+     * <code>actor</code> passato come parametro.
+     *
+     * @param actor attore di cui cercare i collaboratori diretti
+     * @return array di persone
+     */
     @Override
     public Person[] getDirectCollaboratorsOf(Person actor) {
         return graph.getDirectCollaboratorsOf(actor);
     }
 
+    /**
+     * Identificazione del team di un attore
+     * <p>
+     * Restituisce gli attori che hanno
+     * collaborazioni dirette o indirette
+     * con l'attore <code>actor</code> passato come parametro.
+     * <p>
+     * Vedi slide per maggiori informazioni su collaborazioni e team.
+     *
+     * @param actor attore di cui individuare il team
+     * @return array di persone
+     */
     @Override
     public Person[] getTeamOf(Person actor) {
         return graph.getTeamOf(actor);
     }
 
+    /**
+     * Identificazione dell'insieme di collaborazioni
+     * caratteristiche (ICC) del team di cui un attore fa parte
+     * e che ha lo score complessivo più alto
+     * <p>
+     * Vedi slide per maggiori informazioni su score e ICC.
+     * <p>
+     * Si noti che questo metodo richiede l'invocazione
+     * del metodo precedente <code>getTeamOf(Person actor)</code>
+     *
+     * @param actor attore di cui individuare il team
+     * @return array di collaborazioni
+     */
     @Override
-    public Collaboration[] maximizeCollaborationsInTheTeamOf(Person actor) { return graph.maximiseCollaborations(actor); }
+    public Collaboration[] maximizeCollaborationsInTheTeamOf(Person actor) {
+        return graph.maximiseCollaborations(actor);
+    }
 
-    private void importMovie(Movie movie){
-
+    /**
+     * Inserisce un film nelle strutture dati di MovidaCore.
+     *
+     * @param movie Il film da inserire
+     */
+    private void importMovie(Movie movie) {
         String title = movie.getTitle();
         CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
         Integer year = movie.getYear();
@@ -401,13 +627,9 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
             }
 
             this.graph.addMovie(movie);
-
-        }
-
-        else{
+        } else {
             deleteMovieByTitle(title);
             importMovie(movie);
         }
-
     }
 }

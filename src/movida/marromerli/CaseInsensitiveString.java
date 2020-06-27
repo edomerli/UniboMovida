@@ -1,7 +1,8 @@
 package movida.marromerli;
 
-import movida.commons.Movie;
-
+/**
+ * Una stringa che esegue confronti case-insensitive.
+ */
 public class CaseInsensitiveString implements Comparable<CaseInsensitiveString> {
     private String string;
 
@@ -31,11 +32,24 @@ public class CaseInsensitiveString implements Comparable<CaseInsensitiveString> 
         return this.string.equalsIgnoreCase(other.string);
     }
 
+    /**
+     * Restituisce l'hash code.
+     *
+     * @return L'hash code
+     */
     @Override
     public int hashCode() {
         return this.string.toLowerCase().hashCode();
     }
 
+    /**
+     * Variante case-insensitive di String.contains.
+     *
+     * @param source    La stringa che può contenere <code>contained</code>
+     * @param contained La stringa che può essere contenuta in <code>source</code>
+     * @return True se <code>source</code> contiene <code>contained</code>
+     * (ignorando maiuscole e minuscole), false altrimenti
+     */
     public static boolean contains(CaseInsensitiveString source, CaseInsensitiveString contained) {
         return source.string.toLowerCase().contains(contained.string.toLowerCase());
     }
