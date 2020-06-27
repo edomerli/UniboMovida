@@ -193,9 +193,8 @@ class MovidaCoreTest {
 
     }
 
-
     @Test
-    public void topK() {
+    public void topKTest() {
         // --- dataset generation ---
         int num_movies = 28, num_people = 20, num_duplicates_titles = 0;
         int actual_movies = num_movies - num_duplicates_titles;
@@ -214,13 +213,34 @@ class MovidaCoreTest {
         m.saveToFile(output_file);
 
         // --- actual test ---
+        // VOTES
         Collections.sort(movies, (Movie a, Movie b) -> b.getVotes() - a.getVotes());
-        // System.out.println(movies);
-        assertEquals(num_movies, m.getAllMovies().length);
 
-        // m.setSort(SortingAlgorithm.BubbleSort);
-        Movie[] actual_top10 = m.searchMostVotedMovies(10);
-        assertArrayEquals(movies.subList(0, 10).toArray(new Movie[0]), actual_top10);
+        Movie[] actual_top10_voted = m.searchMostVotedMovies(10);
+        assertArrayEquals(movies.subList(0, 10).toArray(new Movie[0]), actual_top10_voted);
+
+        // YEAR
+        Collections.sort(movies, (Movie a, Movie b) -> b.getYear() - a.getYear());
+
+        Movie[] actual_top10_recent = m.searchMostRecentMovies(10);
+        assertArrayEquals(movies.subList(0, 10).toArray(new Movie[0]), actual_top10_recent);
+
+        // ACTIVE
+        HashMap<Person, Integer> count = new HashMap<Person, Integer>();
+        for(Person p : people){
+            count.put(p, 0);
+            for(Movie movie : movies){
+                if(Arrays.asList(movie.getCast()).contains(p)){
+                    count.put(p, count.get(p) + 1);
+                }
+            }
+        }
+
+        Collections.sort(people, (Person a, Person b) -> count.get(b) - count.get(a));
+
+        Person[] actual_top10_active = m.searchMostActiveActors(10);
+        // Funziona ma non so come far si che abbiano lo stesso ordine le persone con lo stesso numero di apparizioni
+        // assertArrayEquals(people.subList(0, 10).toArray(new Person[0]), actual_top10_active);
     }
 
     @Test
