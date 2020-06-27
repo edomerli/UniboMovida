@@ -18,7 +18,7 @@ public class CollaborationGraph {
      * Crea un nuovo CollaborationGraph.
      */
     public CollaborationGraph() {
-        this.graph = new HashMap<Person, Set<Collaboration>>();
+        this.graph = new HashMap<>();
     }
 
     //TODO: Viene solo usato nei test, rimuovere?

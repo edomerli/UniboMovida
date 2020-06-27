@@ -1,7 +1,7 @@
 ===================================================
 		  PROGETTO MOVIDA
 ===================================================
-corso di "Algoritmi e strutture dati"
+Corso di "Algoritmi e strutture dati"
 Università di Bologna 
 A.A. 2019/2020
 
@@ -10,17 +10,23 @@ Realizzato dal gruppo: '); DROP TABLE Gruppi;--
 - Samuele Marro matricola 0000921930
 
 Algoritmi e strutture dati assegnati:
-- algoritmi di ordinamento: BubbleSort, QuickSort
-- implementazioni dizionario: ArrayOrdinato, ABR
+- Algoritmi di ordinamento: BubbleSort, QuickSort
+- Implementazioni dizionario: ArrayOrdinato, ABR
 
 ---------------------------------------------------
-	Istruzioni per compilare/eseguire
+	      Istruzioni per compilare/eseguire
 ---------------------------------------------------
 
-// TODO
+Aggiungere i contenuti della cartella
+src/movida/marromerli e importare la classe MovidaCore.
+Creare un'istanza con new MovidaCore() e
+caricare un file di database con
+MovidaCore.loadFromFile.
+Se si desidera, eseguire i test della cartella
+test/movida/marromerli.
 
 ---------------------------------------------------
-		  Funzionamento
+		           Funzionamento
 ---------------------------------------------------
 
 La classe MovidaCore è la classe entry-point dell'

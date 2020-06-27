@@ -179,7 +179,7 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
      * @return Tutti gli x.value tali che match(x.key, key) == true
      */
     private List<V> searchAllRecursive(K k, BiPredicate<K, K> match, Node root) {
-        if (root == null) return new ArrayList<V>();
+        if (root == null) return new ArrayList<>();
 
         List<V> resultsRecursive = searchAllRecursive(k, match, root.left);
         resultsRecursive.addAll(searchAllRecursive(k, match, root.right));
