@@ -24,8 +24,8 @@ public class BubbleSort implements Sorter {
             for (int j = 0; j < size - 1 - i; j++) {
                 if (comparator.compare(keys.get(j), keys.get(j + 1)) > 0) {
                     T temp = keys.get(j);
-                    keys.set(j, keys.get(j+1));
-                    keys.set(j+1, temp);
+                    keys.set(j, keys.get(j + 1));
+                    keys.set(j + 1, temp);
 
                     swapped = true;
                 }

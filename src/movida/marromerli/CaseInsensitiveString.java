@@ -10,6 +10,18 @@ public class CaseInsensitiveString implements Comparable<CaseInsensitiveString> 
         this.string = string;
     }
 
+    /**
+     * Variante case-insensitive di String.contains.
+     *
+     * @param source    La stringa che può contenere <code>contained</code>
+     * @param contained La stringa che può essere contenuta in <code>source</code>
+     * @return True se <code>source</code> contiene <code>contained</code>
+     * (ignorando maiuscole e minuscole), false altrimenti
+     */
+    public static boolean contains(CaseInsensitiveString source, CaseInsensitiveString contained) {
+        return source.string.toLowerCase().contains(contained.string.toLowerCase());
+    }
+
     @Override
     public String toString() {
         return this.string;
@@ -40,17 +52,5 @@ public class CaseInsensitiveString implements Comparable<CaseInsensitiveString> 
     @Override
     public int hashCode() {
         return this.string.toLowerCase().hashCode();
-    }
-
-    /**
-     * Variante case-insensitive di String.contains.
-     *
-     * @param source    La stringa che può contenere <code>contained</code>
-     * @param contained La stringa che può essere contenuta in <code>source</code>
-     * @return True se <code>source</code> contiene <code>contained</code>
-     * (ignorando maiuscole e minuscole), false altrimenti
-     */
-    public static boolean contains(CaseInsensitiveString source, CaseInsensitiveString contained) {
-        return source.string.toLowerCase().contains(contained.string.toLowerCase());
     }
 }

@@ -17,40 +17,6 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
     private Integer arrayCount;
 
     /**
-     * Rappresenta una coppia (chiave, valore).
-     */
-    private class Pair {
-        private K key;
-        private V value;
-
-        /**
-         * Crea una nuova Pair.
-         * @param key La chiave
-         * @param value Il valore associato
-         */
-        public Pair(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        /**
-         * Restituisce la chiave della Pair.
-         * @return La chiave
-         */
-        public K getKey() {
-            return key;
-        }
-
-        /**
-         * Restituisce il valore associato della Pair.
-         * @return Il valore associato
-         */
-        public V getValue() {
-            return value;
-        }
-    }
-
-    /**
      * Crea un nuovo SortedArrayDictionary.
      */
     public SortedArrayDictionary() {
@@ -60,6 +26,7 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
 
     /**
      * Ridimensiona l'array di elementi.
+     *
      * @param newSize La nuova dimensione
      * @throws RuntimeException Se la nuova dimensione è inferiore
      *                          a <code>arrayCount</code>
@@ -78,6 +45,7 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
 
     /**
      * Restituisce una Pair a una certa posizione.
+     *
      * @param position La posizione considerata
      * @return La Pair corrispondente alla posizione
      */
@@ -91,6 +59,7 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
 
     /**
      * Cerca una chiave nel dizionario.
+     *
      * @param key La chiave da cercare
      * @return Il contenuto associato a key se questa esiste, altrimenti null
      */
@@ -207,5 +176,42 @@ public class SortedArrayDictionary<K extends Comparable<K>, V> implements Dictio
             }
         }
         return results;
+    }
+
+    /**
+     * Rappresenta una coppia (chiave, valore).
+     */
+    private class Pair {
+        private K key;
+        private V value;
+
+        /**
+         * Crea una nuova Pair.
+         *
+         * @param key   La chiave
+         * @param value Il valore associato
+         */
+        public Pair(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        /**
+         * Restituisce la chiave della Pair.
+         *
+         * @return La chiave
+         */
+        public K getKey() {
+            return key;
+        }
+
+        /**
+         * Restituisce il valore associato della Pair.
+         *
+         * @return Il valore associato
+         */
+        public V getValue() {
+            return value;
+        }
     }
 }

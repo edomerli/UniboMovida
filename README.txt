@@ -1,7 +1,7 @@
 ===================================================
-		  PROGETTO MOVIDA
+		        PROGETTO MOVIDA
 ===================================================
-Corso di "Algoritmi e strutture dati"
+Corso di "Algoritmi e Strutture Dati"
 Università di Bologna 
 A.A. 2019/2020
 
@@ -18,12 +18,12 @@ Algoritmi e strutture dati assegnati:
 ---------------------------------------------------
 
 Aggiungere i contenuti della cartella
-src/movida/marromerli e importare la classe MovidaCore.
+src/movida/ e importare la classe MovidaCore.
 Creare un'istanza con new MovidaCore() e
 caricare un file di database con
 MovidaCore.loadFromFile.
 Se si desidera, eseguire i test della cartella
-test/movida/marromerli.
+test/movida/marromerli/.
 
 ---------------------------------------------------
 		           Funzionamento
@@ -65,8 +65,7 @@ mentre gli ultimi quella Dictionary.
 
 La classe CaseInsensitiveString è stata necessaria
 per identificare un film col suo titolo o una 
-persona con il proprio nome in maniera case-insensitive
-appunto.
+persona con il proprio nome in maniera case-insensitive.
 
 La classe CollaborationGraph è stata realizzata al
 fine di rappresentare le collaborazioni fra attori

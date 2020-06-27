@@ -12,27 +12,6 @@ import java.util.function.BiPredicate;
  * @param <V> Il tipo dei valori associati
  */
 public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
-    /**
-     * Rappresenta un nodo di un ABR.
-     */
-    private class Node {
-        public K key;
-        public V value;
-        public Node left, right;
-
-        /**
-         * Crea un nuovo nodo.
-         * @param key La chiave del nodo
-         * @param value Il valore associato
-         */
-        public Node(K key, V value) {
-            this.key = key;
-            this.value = value;
-            left = null;
-            right = null;
-        }
-    }
-
     private Node root;
 
     /**
@@ -44,7 +23,8 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
 
     /**
      * Inserisce una coppia (key, value) nel dizionario.
-     * @param key La chiave che identifica il contenuto
+     *
+     * @param key   La chiave che identifica il contenuto
      * @param value Il contenuto da associare alla chiave (viene aggiornato se
      *              la chiave era già presente nel dizionario)
      */
@@ -55,11 +35,12 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
 
     /**
      * Inserisce ricorsivamente un elemento nell'ABR.
-     * @param k Chiave da inserire
-     * @param v Valore da inserire
+     *
+     * @param k    Chiave da inserire
+     * @param v    Valore da inserire
      * @param root Radice dell'ABR
      * @return Il nodo che contiene <code>k</code>
-     *         e <code>v</code>
+     * e <code>v</code>
      */
     private Node insertRecursive(K k, V v, Node root) {
         if (root == null) {
@@ -75,6 +56,7 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
 
     /**
      * Cerca una chiave nel dizionario.
+     *
      * @param key La chiave da cercare
      * @return Il contenuto associato a key se questa esiste, altrimenti null
      */
@@ -85,6 +67,7 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
 
     /**
      * Cerca ricorsivamente una chiave nel dizionario.
+     *
      * @param k La chiave da cercare
      * @return Il contenuto associato a k se questa esiste, altrimenti null
      */
@@ -100,6 +83,7 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
     /**
      * Rimuove un elemento dal dizionario. Se la chiave non è presente, non
      * fa nulla.
+     *
      * @param key La chiave dell'elemento da rimuovere
      */
     @Override
@@ -110,6 +94,7 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
     /**
      * Rimuove ricorsivamente un elemento dal dizionario.
      * Se la chiave non è presente, non fa nulla.
+     *
      * @param k La chiave dell'elemento da rimuovere
      */
     private Node removeRecursive(K k, Node root) {
@@ -122,8 +107,8 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
             }
 
             // Case 2: node to be deleted has 1 child
-            if(root.left == null) return root.right;
-            else if(root.right == null) return root.left;
+            if (root.left == null) return root.right;
+            else if (root.right == null) return root.left;
 
             // Case 3: node to be deleted it's an internal node (2 children)
             Node successor = minSubtree(root.right);
@@ -186,5 +171,27 @@ public class ABR<K extends Comparable<K>, V> implements Dictionary<K, V> {
         if (match.test(root.key, k)) resultsRecursive.add(root.value);
 
         return resultsRecursive;
+    }
+
+    /**
+     * Rappresenta un nodo di un ABR.
+     */
+    private class Node {
+        public K key;
+        public V value;
+        public Node left, right;
+
+        /**
+         * Crea un nuovo nodo.
+         *
+         * @param key   La chiave del nodo
+         * @param value Il valore associato
+         */
+        public Node(K key, V value) {
+            this.key = key;
+            this.value = value;
+            left = null;
+            right = null;
+        }
     }
 }

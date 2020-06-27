@@ -12,57 +12,6 @@ class VariablePriorityQueue<K extends Comparable<K>> {
     private PriorityQueue<Entry<K>> queue;
 
     /**
-     * Rappresenta un elemento della PriorityQueue.
-     *
-     * @param <K> Il tipo di elemento
-     */
-    static class Entry<K extends Comparable<K>> implements Comparable<Entry<K>> {
-        private K key;
-        private double priority;
-
-        public Entry(K key, double priority) {
-            this.key = key;
-            this.priority = priority;
-        }
-
-        /**
-         * Restituisce la chiave.
-         *
-         * @return La chiave
-         */
-        public K getKey() {
-            return this.key;
-        }
-
-        /**
-         * Restituisce la priorità.
-         *
-         * @return La priorità dell'elemento.
-         */
-        public double getPriority() {
-            return this.priority;
-        }
-
-        @Override
-        public int compareTo(Entry<K> entry) {
-            return Double.compare(this.priority, entry.priority);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if ((obj instanceof Entry)) {
-                Entry other = (Entry) obj;
-                return this.key.equals(other.key);
-            } else {
-                return false;
-            }
-        }
-    }
-
-    /**
      * Crea una nuova VariablePriorityQueue.
      */
     public VariablePriorityQueue() {
@@ -115,5 +64,56 @@ class VariablePriorityQueue<K extends Comparable<K>> {
 
         queue.remove(new Entry<>(key, -1));
         queue.add(new Entry<>(key, newPriority));
+    }
+
+    /**
+     * Rappresenta un elemento della PriorityQueue.
+     *
+     * @param <K> Il tipo di elemento
+     */
+    static class Entry<K extends Comparable<K>> implements Comparable<Entry<K>> {
+        private K key;
+        private double priority;
+
+        public Entry(K key, double priority) {
+            this.key = key;
+            this.priority = priority;
+        }
+
+        /**
+         * Restituisce la chiave.
+         *
+         * @return La chiave
+         */
+        public K getKey() {
+            return this.key;
+        }
+
+        /**
+         * Restituisce la priorità.
+         *
+         * @return La priorità dell'elemento.
+         */
+        public double getPriority() {
+            return this.priority;
+        }
+
+        @Override
+        public int compareTo(Entry<K> entry) {
+            return Double.compare(this.priority, entry.priority);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if ((obj instanceof Entry)) {
+                Entry other = (Entry) obj;
+                return this.key.equals(other.key);
+            } else {
+                return false;
+            }
+        }
     }
 }

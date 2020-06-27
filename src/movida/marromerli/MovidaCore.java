@@ -80,7 +80,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                 this.moviesByYear = new SortedArrayDictionary<>();
                 this.moviesByDirector = new SortedArrayDictionary<>();
                 this.moviesByActor = new SortedArrayDictionary<>();
-            } else{
+            } else {
                 this.personByName = new ABR<>();
                 this.moviesByTitle = new ABR<>();
                 this.moviesByYear = new ABR<>();
@@ -89,7 +89,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
             }
 
             // Trasferimento della knowledge-base
-            for(Movie movie : moviesOrderedByVotes) {
+            for (Movie movie : moviesOrderedByVotes) {
                 String title = movie.getTitle();
                 CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
                 Integer year = movie.getYear();
@@ -115,7 +115,6 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                     if (personByName.search(caseInsensitiveName) == null)
                         personByName.insert(caseInsensitiveName, actor);
                 }
-
             }
 
             this.mapImplementation = m;
@@ -317,11 +316,11 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
 
         Integer year = toBeDeleted.getYear();
         moviesByYear.search(year).remove(toBeDeleted);
-        if(moviesByYear.search(year).size() == 0){
+        if (moviesByYear.search(year).size() == 0) {
             moviesByYear.remove(year);
         }
 
-        for(Person actor : toBeDeleted.getCast()) {
+        for (Person actor : toBeDeleted.getCast()) {
             String name = actor.getName();
             CaseInsensitiveString caseInsensitiveName = new CaseInsensitiveString(name);
             moviesByActor.search(caseInsensitiveName).remove(toBeDeleted);
@@ -614,7 +613,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                 personByName.insert(caseInsensitiveDirectorName, director);
                 people.add(director);
             }
-            if(moviesByDirector.search(caseInsensitiveDirectorName) == null) {
+            if (moviesByDirector.search(caseInsensitiveDirectorName) == null) {
                 moviesByDirector.insert(caseInsensitiveDirectorName, new ArrayList<>());
             }
             moviesByDirector.search(caseInsensitiveDirectorName).add(movie);

@@ -12,21 +12,11 @@ import java.util.*;
 public class CollaborationGraph {
     private HashMap<Person, Set<Collaboration>> graph;
 
-    // TODO: store the resulting graphs (BFS and MST) to return if nothing changes?
-
     /**
      * Crea un nuovo CollaborationGraph.
      */
     public CollaborationGraph() {
         this.graph = new HashMap<>();
-    }
-
-    //TODO: Viene solo usato nei test, rimuovere?
-    public boolean addCollaboration(Collaboration collaboration) {
-        if (!graph.containsKey(collaboration.getActorA())) {
-            graph.put(collaboration.getActorA(), new HashSet<>());
-        }
-        return graph.get(collaboration.getActorA()).add(collaboration);
     }
 
     /**
