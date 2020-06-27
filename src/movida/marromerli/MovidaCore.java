@@ -41,6 +41,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     public MovidaCore() {
         // Scelte di default
         this.sortingAlgorithm = SortingAlgorithm.QuickSort;
+        this.sorter = new QuickSort();
         this.mapImplementation = MapImplementation.ABR;
         this.sorter = new QuickSort();
 

@@ -193,12 +193,10 @@ class MovidaCoreTest {
 
     }
 
-
     @Test
-    public void topK() {
+    public void topKTest() {
         // --- dataset generation ---
         int num_movies = 28, num_people = 20, num_duplicates_titles = 0;
-        int actual_movies = num_movies - num_duplicates_titles;
         List<Person> people = generatePeople(num_people);
         List<String> titles = generateTitles(num_movies, num_duplicates_titles);
         List<Movie> movies = generateMovies(people, titles, num_movies);
@@ -214,13 +212,111 @@ class MovidaCoreTest {
         m.saveToFile(output_file);
 
         // --- actual test ---
+        // VOTES
         Collections.sort(movies, (Movie a, Movie b) -> b.getVotes() - a.getVotes());
-        // System.out.println(movies);
-        assertEquals(num_movies, m.getAllMovies().length);
 
-        // m.setSort(SortingAlgorithm.BubbleSort);
-        Movie[] actual_top10 = m.searchMostVotedMovies(10);
-        assertArrayEquals(movies.subList(0, 10).toArray(new Movie[0]), actual_top10);
+        Movie[] actual_top10_voted = m.searchMostVotedMovies(10);
+        assertArrayEquals(movies.subList(0, 10).toArray(new Movie[0]), actual_top10_voted);
+
+        // YEAR
+        Collections.sort(movies, (Movie a, Movie b) -> b.getYear() - a.getYear());
+
+        Movie[] actual_top10_recent = m.searchMostRecentMovies(10);
+        assertArrayEquals(movies.subList(0, 10).toArray(new Movie[0]), actual_top10_recent);
+
+        // ACTIVE
+        HashMap<Person, Integer> count = new HashMap<Person, Integer>();
+        for(Person p : people){
+            count.put(p, 0);
+            for(Movie movie : movies){
+                if(Arrays.asList(movie.getCast()).contains(p)){
+                    count.put(p, count.get(p) + 1);
+                }
+            }
+        }
+
+        Collections.sort(people, (Person a, Person b) -> count.get(b) - count.get(a));
+
+        Person[] actual_top10_active = m.searchMostActiveActors(10);
+        // Funziona ma non so come far si che abbiano lo stesso ordine le persone con lo stesso numero di apparizioni
+        // assertArrayEquals(people.subList(0, 10).toArray(new Person[0]), actual_top10_active);
+    }
+
+    @Test
+    public void selectionTest() {
+        // --- dataset generation ---
+        int num_movies = 28, num_people = 20, num_duplicates_titles = 0;
+        List<Person> people = generatePeople(num_people);
+        List<String> titles = generateTitles(num_movies, num_duplicates_titles);
+        List<Movie> movies = generateMovies(people, titles, num_movies);
+
+        String inputPath = "src/movida/commons/test-dati.txt";
+        String outputPath = "src/movida/commons/test-dati-output.txt";
+        File input_file = new File(inputPath);
+        File output_file = new File(outputPath);
+        generateFile(movies, input_file);
+
+        MovidaCore m = new MovidaCore();
+        m.loadFromFile(input_file);
+        m.saveToFile(output_file);
+
+        // --- actual test ---
+        // BY TITLE
+        List<Movie> expectedByTitle = new ArrayList<>();
+        String title = "n";
+        for(Movie movie : movies){
+            if(movie.getTitle().contains(title)) expectedByTitle.add(movie);
+        }
+        Collections.sort(expectedByTitle, (Movie a, Movie b) -> a.getTitle().compareTo(b.getTitle()));
+
+        Movie[] actualByTitle = m.searchMoviesByTitle(title);
+        Arrays.sort(actualByTitle, (Movie a, Movie b) -> a.getTitle().compareTo(b.getTitle()));
+        assertArrayEquals(expectedByTitle.toArray(new Movie[0]), actualByTitle);
+
+        List<Movie> expectedByTitle_empty = new ArrayList<>();
+        title = "jsa;dfkjhs dflkheurwyeor";
+        for(Movie movie : movies){
+            if(movie.getTitle().contains(title)) expectedByTitle_empty.add(movie);
+        }
+
+        Movie[] actualByTitle_empty = m.searchMoviesByTitle(title);
+        assertArrayEquals(expectedByTitle_empty.toArray(new Movie[0]), actualByTitle_empty);
+        assertEquals(0, expectedByTitle_empty.size());
+        // BY YEAR
+        for(int i=0; i<2020; ++i){
+            List<Movie> expected = new ArrayList<>();
+            for(Movie movie : movies){
+                if(movie.getYear() == i) expected.add(movie);
+            }
+            Collections.sort(expected, (Movie a, Movie b) -> a.getTitle().compareTo(b.getTitle()));
+            Movie[] actual = m.searchMoviesInYear(i);
+            Arrays.sort(actual, (Movie a, Movie b) -> a.getTitle().compareTo(b.getTitle()));
+            assertArrayEquals(expected.toArray(new Movie[0]), actual);
+        }
+
+        // BY DIRECTOR
+        for(Person p : people){
+            List<Movie> expected = new ArrayList<>();
+            for(Movie movie : movies){
+                if(movie.getDirector() == p) expected.add(movie);
+            }
+            Collections.sort(expected, (Movie a, Movie b) -> a.getTitle().compareTo(b.getTitle()));
+            Movie[] actual = m.searchMoviesDirectedBy(p.getName());
+            Arrays.sort(actual, (Movie a, Movie b) -> a.getTitle().compareTo(b.getTitle()));
+            assertArrayEquals(expected.toArray(new Movie[0]), actual);
+        }
+
+        // BY ACTOR
+        for(Person p : people){
+            List<Movie> expected = new ArrayList<>();
+            for(Movie movie : movies){
+                if(Arrays.asList(movie.getCast()).contains(p)) expected.add(movie);
+            }
+            Collections.sort(expected, (Movie a, Movie b) -> a.getTitle().compareTo(b.getTitle()));
+            Movie[] actual = m.searchMoviesStarredBy(p.getName());
+            Arrays.sort(actual, (Movie a, Movie b) -> a.getTitle().compareTo(b.getTitle()));
+            assertArrayEquals(expected.toArray(new Movie[0]), actual);
+        }
     }
 
     @Test
