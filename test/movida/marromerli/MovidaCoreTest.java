@@ -195,11 +195,12 @@ class MovidaCoreTest {
 
 
     @Test
-    public void topKRecent() {
+    public void topK() {
         // --- dataset generation ---
-        int num_movies = 0, num_people = 0, num_duplicate_titles = 0;
+        int num_movies = 28, num_people = 20, num_duplicates_titles = 0;
+        int actual_movies = num_movies - num_duplicates_titles;
         List<Person> people = generatePeople(num_people);
-        List<String> titles = generateTitles(num_movies, num_duplicate_titles);
+        List<String> titles = generateTitles(num_movies, num_duplicates_titles);
         List<Movie> movies = generateMovies(people, titles, num_movies);
 
         String inputPath = "src/movida/commons/test-dati.txt";
@@ -213,17 +214,13 @@ class MovidaCoreTest {
         m.saveToFile(output_file);
 
         // --- actual test ---
+        Collections.sort(movies, (Movie a, Movie b) -> b.getVotes() - a.getVotes());
+        // System.out.println(movies);
+        assertEquals(num_movies, m.getAllMovies().length);
 
-
-    }
-
-    @Test
-    public void topKVoted() {
-
-    }
-
-    @Test void topKActive() {
-
+        // m.setSort(SortingAlgorithm.BubbleSort);
+        Movie[] actual_top10 = m.searchMostVotedMovies(10);
+        assertArrayEquals(movies.subList(0, 10).toArray(new Movie[0]), actual_top10);
     }
 
     @Test
