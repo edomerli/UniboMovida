@@ -472,13 +472,13 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     @Override
     public Movie[] searchMostVotedMovies(Integer N) {
         if (!areMoviesSortedByVotes) {
-            sorter.sort(moviesOrderedByVotes, (Movie a, Movie b) -> a.getVotes() - b.getVotes());
+            sorter.sort(moviesOrderedByVotes, (Movie a, Movie b) -> b.getVotes() - a.getVotes());
             this.areMoviesSortedByVotes = true;
         }
 
         int size = moviesOrderedByVotes.size();
         if (N >= size) return moviesOrderedByVotes.toArray(new Movie[0]);
-        return moviesOrderedByVotes.subList(size - N, size).toArray(new Movie[0]);
+        return moviesOrderedByVotes.subList(0, N).toArray(new Movie[0]);
     }
 
     /**
@@ -496,13 +496,13 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     @Override
     public Movie[] searchMostRecentMovies(Integer N) {
         if (!areMoviesSortedByYear) {
-            sorter.sort(moviesOrderedByYear, (Movie a, Movie b) -> a.getYear() - b.getYear());
+            sorter.sort(moviesOrderedByYear, (Movie a, Movie b) -> b.getYear() - a.getYear());
             this.areMoviesSortedByYear = true;
         }
 
         int size = moviesOrderedByYear.size();
         if (N >= size) return moviesOrderedByYear.toArray(new Movie[0]);
-        return moviesOrderedByYear.subList(size - N, size).toArray(new Movie[0]);
+        return moviesOrderedByYear.subList(0, N).toArray(new Movie[0]);
     }
 
     /**
@@ -520,13 +520,13 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     @Override
     public Person[] searchMostActiveActors(Integer N) {
         if (!areActorsSorted) {
-            sorter.sort(actors, (Person a, Person b) -> moviesByActor.search(new CaseInsensitiveString(a.getName())).size() - moviesByActor.search(new CaseInsensitiveString(b.getName())).size());
+            sorter.sort(actors, (Person a, Person b) -> moviesByActor.search(new CaseInsensitiveString(b.getName())).size() - moviesByActor.search(new CaseInsensitiveString(a.getName())).size());
             this.areActorsSorted = true;
         }
 
         int size = actors.size();
         if (N >= size) return actors.toArray(new Person[0]);
-        return actors.subList(size - N, size).toArray(new Person[0]);
+        return actors.subList(0, N).toArray(new Person[0]);
     }
 
     /**
