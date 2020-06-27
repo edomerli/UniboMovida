@@ -14,16 +14,17 @@ import java.util.Scanner;
  * Classe per gestire un database di film.
  */
 public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMovidaCollaborations {
-    private SortingAlgorithm sortingAlgorithm;      //Algoritmo usato
-    private MapImplementation mapImplementation;        //Implementazione di dizionario usata
+    private SortingAlgorithm sortingAlgorithm; // Algoritmo usato
+    private MapImplementation mapImplementation; // Implementazione di dizionario usata
 
-    private List<Movie> moviesOrderedByVotes, moviesOrderedByYear;
-    private List<Person> actors, people;
+    private List<Movie> moviesOrderedByVotes, moviesOrderedByYear;  // Liste dei film, ordinate secondo voti e anno distintamente
+    private List<Person> actors, people;    // Insieme degli attori e delle persone (sia attori che direttori)
 
     private Sorter sorter;
-    private boolean areMoviesSortedByVotes, areMoviesSortedByYear, areActorsSorted;
+    private boolean areMoviesSortedByVotes, areMoviesSortedByYear, areActorsSorted; // Flag per indicare se le liste sono ordinate
 
 
+    // Dizionari distinti in base ai vari criteri di ricerca
     private Dictionary<CaseInsensitiveString, Person> personByName;
 
     private Dictionary<CaseInsensitiveString, Movie> moviesByTitle;
@@ -31,13 +32,14 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
     private Dictionary<CaseInsensitiveString, List<Movie>> moviesByDirector;
     private Dictionary<CaseInsensitiveString, List<Movie>> moviesByActor;
 
+    // Grafo delle collaborazioni
     private CollaborationGraph graph;
 
     /**
      * Crea una nuova MovidaCore.
      */
     public MovidaCore() {
-        // Default choices
+        // Scelte di default
         this.sortingAlgorithm = SortingAlgorithm.QuickSort;
         this.mapImplementation = MapImplementation.ABR;
 
@@ -68,6 +70,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
      */
     @Override
     public boolean setMap(MapImplementation m) {
+        // Se la scelta è fra le supportate ma diversa da quella attuale
         if ((m == MapImplementation.ArrayOrdinato || m == MapImplementation.ABR) && this.mapImplementation != m) {
             if (m == MapImplementation.ArrayOrdinato) {
                 this.personByName = new SortedArrayDictionary<>();
@@ -83,6 +86,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                 this.moviesByActor = new ABR<>();
             }
 
+            // Trasferimento della knowledge-base
             for(Movie movie : moviesOrderedByVotes) {
                 String title = movie.getTitle();
                 CaseInsensitiveString caseInsensitiveTitle = new CaseInsensitiveString(title);
@@ -106,6 +110,8 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                     if (moviesByActor.search(caseInsensitiveName) == null)
                         moviesByActor.insert(caseInsensitiveName, new ArrayList<>());
                     moviesByActor.search(caseInsensitiveName).add(movie);
+                    if (personByName.search(caseInsensitiveName) == null)
+                        personByName.insert(caseInsensitiveName, actor);
                 }
 
             }
@@ -128,6 +134,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
      */
     @Override
     public boolean setSort(SortingAlgorithm a) {
+        // Se la scelta è fra le supportate ma diversa da quella attuale
         if ((a == SortingAlgorithm.BubbleSort || a == SortingAlgorithm.QuickSort) && this.sortingAlgorithm != a) {
 
             if (a == SortingAlgorithm.BubbleSort) {
@@ -179,7 +186,7 @@ public class MovidaCore implements IMovidaConfig, IMovidaDB, IMovidaSearch, IMov
                     castNames = movieData[3].split(", ");
                 }
 
-                //Cast vuoto
+                // Cast vuoto
                 if (castNames.length == 1 && castNames[0].equals("")) {
                     castNames = new String[0];
                 }

@@ -6,11 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.Integer.min;
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,7 +47,7 @@ class MovidaCoreTest {
             titles.add(choices[i]);
         }
         for(int i=0; i<min(duplicatesN, choices.length); i++){
-            titles.add(choices[i]);
+            titles.add(choices[i].toUpperCase());
         }
         return titles;
     }
@@ -138,11 +134,10 @@ class MovidaCoreTest {
     @Test
     public void DBTest() {
         // --- dataset generation ---
-        int num_movies = 28, num_people = 15, num_duplicates_titles = 7;
+        int num_movies = 28, num_people = 20, num_duplicates_titles = 7;
         List<Person> people = generatePeople(num_people);
         List<String> titles = generateTitles(num_movies, num_duplicates_titles);
         List<Movie> movies = generateMovies(people, titles, num_movies);
-        System.out.println(titles);
 
         String inputPath = "src/movida/commons/test-dati.txt";
         String outputPath = "src/movida/commons/test-dati-output.txt";
@@ -158,20 +153,46 @@ class MovidaCoreTest {
 
         assertEquals(num_movies - num_duplicates_titles, m.countMovies());
         assertEquals(num_people, m.countPeople());
+
+        for(int i=num_duplicates_titles; i<num_movies; ++i) {
+            assertEquals(movies.get(i), m.getMovieByTitle(movies.get(i).getTitle()));
+        }
+
+        for(Person p : people) {
+            assertEquals(p, m.getPersonByName(p.getName()));
+        }
+
+        assertArrayEquals(movies.subList(num_duplicates_titles, movies.size()).toArray(new Movie[0]), m.getAllMovies());
+
+        Collections.sort(people);
+        Person[] movida_people = m.getAllPeople();
+        Arrays.sort(movida_people);
+        assertArrayEquals(people.toArray(new Person[0]), movida_people);
+
+        m.setMap(MapImplementation.ArrayOrdinato);
+        m.setMap(MapImplementation.ABR);
+
+        assertEquals(num_movies - num_duplicates_titles, m.countMovies());
+        assertEquals(num_people, m.countPeople());
+
+        for(int i=num_duplicates_titles; i<num_movies; ++i) {
+            assertEquals(movies.get(i), m.getMovieByTitle(movies.get(i).getTitle()));
+        }
+
+        for(Person p : people) {
+            assertEquals(p, m.getPersonByName(p.getName()));
+        }
+
+        assertArrayEquals(movies.subList(num_duplicates_titles, movies.size()).toArray(new Movie[0]), m.getAllMovies());
+
+        Collections.sort(people);
+        movida_people = m.getAllPeople();
+        Arrays.sort(movida_people);
+        assertArrayEquals(people.toArray(new Person[0]), movida_people);
+
+
     }
 
-    @Test
-    public void test1() {
-        MovidaCore m = loadDefaultCore();
-
-        System.out.println(Arrays.toString(m.getAllMovies()));
-        boolean deleted = m.deleteMovieByTitle("Cape Fear");
-        System.out.println(deleted);
-
-        String outputPath = "src/movida/commons/esempio-formato-dati-output.txt";
-        File output = new File(outputPath);
-        m.saveToFile(output);
-    }
 
     @Test
     public void topKRecent() {
@@ -217,6 +238,19 @@ class MovidaCoreTest {
         assertEquals(2, m.searchMoviesInYear(1997).length);
         assertEquals(2, m.searchMoviesStarredBy("Robert De Niro").length);
         assertEquals(6, m.getDirectCollaboratorsOf(m.getPersonByName("Harrison Ford")).length);
+    }
+
+    @Test
+    public void test1() {
+        MovidaCore m = loadDefaultCore();
+
+        System.out.println(Arrays.toString(m.getAllMovies()));
+        boolean deleted = m.deleteMovieByTitle("Cape Fear");
+        System.out.println(deleted);
+
+        String outputPath = "src/movida/commons/esempio-formato-dati-output.txt";
+        File output = new File(outputPath);
+        m.saveToFile(output);
     }
 
     @Test
